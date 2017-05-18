@@ -33,6 +33,12 @@ def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
         # 运行一趟
         main_table.time_run()
 
+    # 记录最后的回合
+    log.append(LogEntry(main_table.tick,
+                        RacketData(main_table.players[main_table.side]),
+                        RacketData(main_table.players[main_table.op_side]),
+                        BallData(main_table.ball)))
+
     # 终局，保存双方的历史数据，文件名为"DS-<name>"
     for side in ('West', 'East'):
         d = shelve.open('DS-%s' % (main_table.players[side].name,))
@@ -53,6 +59,7 @@ def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
+    print(main_table.tick, main_table.tick_step)
 
     # 终局打印信息输出
     print("%s win! for %s, West:%s, East:%s" % (main_table.winner, main_table.reason,

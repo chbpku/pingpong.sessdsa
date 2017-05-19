@@ -63,6 +63,36 @@ class Ball:  # 球
     def fly(self, ticks):  # 球运动，更新位置，并返回触壁次数
         # x方向的位置
         self.pos.x += self.velocity.x * ticks
+
+        # 以下是李逸飞同学的简短新算法
+        # ===========NEW!=============
+        Y = self.velocity.y * ticks + self.pos.y  # Y是没有墙壁时到达的位置
+        if Y % self.extent[3] != 0:  # case1：未在边界
+            count = Y // self.extent[3]  # 穿过了多少次墙（可以是负的，最后取绝对值）
+
+            # 两种情形：a） 穿过偶数次墙，这时没有对称变换，速度保持不变。到达的位置就是Y0=Y-self.extent[3]*count
+            #           b） 穿过奇数次墙，是一次对称和一次平移的复合，速度反向。先做平移，到达Y0=Y-self.extent[3]*count，再反射，到self.extent[3]-Y0
+            # 综合两种情形，奇数时Y0是负的，多一个self.extent[3];偶数时Y0是正的，没有self.extent[3]。综上，ynew=Y0*(-1)^count+(1-(-1)^count)/2*self.extent[3]
+            # 因不清楚负数能不能做任意整指数幂，所以用取余来表示奇偶性。
+
+            self.pos.y = (Y - count * self.extent[3]) * (1 - 2 * (count % 2)) + self.extent[3] * (count % 2)
+            self.velocity.y = self.velocity.y * ((count + 1) % 2 * 2 - 1)
+            return abs(count)
+        else:  # case2： 恰好在边界
+
+            # 两种情形：a） 向上穿墙，穿了1 - Y // self.extent[3] 次（代入Y = 0验证）
+            #           b） 向下穿墙，穿了 Y // self.extent[3] 次（代入Y = self.extent[3] 验证）
+            # 无论怎样，实际位置要么在0，要么在self.extent[3]。直接模( 2 * self.extent[3] )即可。
+            # 速度只和count奇偶有关，同上。
+
+            count = (Y // self.extent[3]) if (Y > 0) else (1 - Y // self.extent[3])
+            self.pos.y = Y % (2 * self.extent[3])
+            self.velocity.y = self.velocity.y * ((count + 1) % 2 * 2 - 1)
+            return count
+            # ===========END==============
+
+
+'''
         # y方向速度为0
         if self.velocity.y == 0:
             return 0  # y坐标不改变，触壁次数为0
@@ -98,6 +128,7 @@ class Ball:  # 球
                 else:  # 奇数，速度方向不变
                     self.pos.y = self.extent[3] + remain * self.velocity.y
                 return count + 1
+'''
 
 
 class RacketAction:  # 球拍动作
@@ -131,19 +162,21 @@ class Racket:  # 球拍
 
     def update_pos_bat(self, tick_step):
         # 如果指定迎球的距离大于最大速度的距离，则采用最大速度距离
-        self.pos.y += sign(self.action.bat) * min(abs(self.action.bat), self.get_velocity() * tick_step)
+        bat_distance = sign(self.action.bat) * min(abs(self.action.bat), self.get_velocity() * tick_step)
+        self.pos.y += bat_distance
         # 减少生命值
-        self.life -= int((abs(self.action.bat) / FACTOR_DISTANCE) ** 2)
+        self.life -= int(abs(bat_distance) ** 2 / FACTOR_DISTANCE ** 2)
 
     def update_pos_run(self, tick_step):
         # 如果指定跑位的距离大于最大速度的距离，则采用最大速度距离
-        self.pos.y += sign(self.action.run) * min(abs(self.action.run), self.get_velocity() * tick_step)
+        run_distance = sign(self.action.run) * min(abs(self.action.run), self.get_velocity() * tick_step)
+        self.pos.y += run_distance
         # 减少生命值
-        self.life -= int((abs(self.action.run) / FACTOR_DISTANCE) ** 2)
+        self.life -= int(abs(run_distance) ** 2 / FACTOR_DISTANCE ** 2)
 
     def update_acc(self):
         # 按照给球加速度的指标减少生命值
-        self.life -= int((abs(self.action.acc) / FACTOR_SPEED) ** 2)
+        self.life -= int(abs(self.action.acc) ** 2 / FACTOR_SPEED ** 2)
 
 
 class TableData:  # 球桌信息，player计算用

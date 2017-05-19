@@ -11,7 +11,7 @@ BALL_V = (1000, 1000)
 # 球拍的生命值，100个回合以上
 RACKET_LIFE = 100000
 # 迎球和跑位扣减距离除以系数的平方（LIFE=0-1000)
-FACTOR_DISTANCE = 3000
+FACTOR_DISTANCE = 30000
 # 加速则扣减速度除以系数结果的平方（LIFE=0-400)
 FACTOR_SPEED = 50
 # 游戏方代码

@@ -137,7 +137,7 @@ class Racket:  # 球拍
 
     def update_pos_run(self, tick_step):
         # 如果指定跑位的距离大于最大速度的距离，则采用最大速度距离
-        self.pos.y += sign(self.action.bat) * min(abs(self.action.run), self.get_velocity() * tick_step)
+        self.pos.y += sign(self.action.run) * min(abs(self.action.run), self.get_velocity() * tick_step)
         # 减少生命值
         self.life -= int((abs(self.action.run) / FACTOR_DISTANCE) ** 2)
 

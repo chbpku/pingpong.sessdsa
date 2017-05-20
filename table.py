@@ -1,5 +1,6 @@
 import copy
 import random
+import math
 
 # 桌面的坐标系，单位"pace"
 DIM = (-900000, 900000, 0, 1000000)
@@ -220,9 +221,9 @@ class RacketAction:  # 球拍动作
 
     def normalize(self):
         # 全都规范为整数
-        self.bat= int(self.bat)
-        self.acc= int(self.acc)
-        self.run= int(self.run)
+        self.bat = int(self.bat)
+        self.acc = int(self.acc)
+        self.run = int(self.run)
 
 
 class Racket:  # 球拍

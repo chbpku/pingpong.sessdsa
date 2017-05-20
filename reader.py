@@ -1,3 +1,4 @@
+# by 郭浩
 import shelve
 
 filename="[W.T]T_idiot-VS-T_idiot"  # 根据待转换文件名修改

@@ -7,6 +7,8 @@
 
 课程网站：[数据结构与算法Python版](http://gis4g.pku.edu.cn/course/pythonds/)
 
+实习作业网站：[漂移乒乓](https://chbpku.github.io/pingpong.sessdsa/)
+
 ## 文件说明：
 - pingpong.py：乒乓对战主程序，自动查找当前目录下“T_*.py”的文件作为算法，两两对战，并输出结果（文本）和复盘数据（以shelve模块方式保存）。
 - table.py：主要类Table、LogEntry等定义
@@ -15,6 +17,9 @@
 - FAQ.md：常见问题
 
 ## 修改历史
+
+### 20170520
+- 增加了常见问题FAQ.md
 
 ### 20170519
 - 李逸飞重写了fly函数的主要算法，更加简洁；

@@ -398,7 +398,7 @@ class Table:  # 球桌
                         (-1 if op_player.action.run < 0 else 1)}
         dict_ball = {'position': copy.copy(self.ball.pos),
                      'velocity': copy.copy(self.ball.velocity)}
-        dict_card = {'card_stick': self.card_tick,
+        dict_card = {'card_tick': self.card_tick,
                      'cards': copy.copy(self.cards)}
         # 调用，返回迎球方的动作
         player_action = player.play(TableData(self.tick, self.tick_step,

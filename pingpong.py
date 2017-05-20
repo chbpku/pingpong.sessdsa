@@ -59,8 +59,10 @@ def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
-    print(main_table.tick, main_table.tick_step)
-    print(main_table.players[main_table.side].life, main_table.players[main_table.op_side].life)
+    print("tick:"+str(main_table.tick))
+    print("tickstep"+str(main_table.tick_step))
+    print("Westlife:"+str(main_table.players[main_table.side].life))
+    print("Eastlife:"+str(main_table.players[main_table.op_side].life))
 
     # 终局打印信息输出
     print("%s win! for %s, West:%s, East:%s" % (main_table.winner, main_table.reason,

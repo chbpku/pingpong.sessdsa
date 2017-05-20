@@ -12,6 +12,7 @@
 - table.py：主要类Table、LogEntry等定义
 - T_idiot.py：示例对战算法，只被动接球
 - README.md：本文件
+- FAQ.md：常见问题
 
 ## 修改历史
 

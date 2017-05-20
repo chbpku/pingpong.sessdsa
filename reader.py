@@ -1,9 +1,9 @@
 # by 郭浩
 import shelve
 
-filename="[W.T]T_idiot-VS-T_idiot"  # 根据待转换文件名修改
-file=shelve.open(filename)
-with open("[W.T]T_idiot-VS-T_idiot.txt",'w') as output:  # 根据输出文件名修改
+filename = "[W.T]T_idiot-VS-T_idiot"  # 根据待转换文件名修改
+file = shelve.open(filename)
+with open("[W.T]T_idiot-VS-T_idiot.txt", 'w') as output:  # 根据输出文件名修改
 
     output.write("DIM:")
     output.write(str(file['DIM']))
@@ -30,7 +30,7 @@ with open("[W.T]T_idiot-VS-T_idiot.txt",'w') as output:  # 根据输出文件名
     output.write("\n")
 
     output.write("winner:")
-    output.write(file['winner'] )
+    output.write(file['winner'])
     output.write("\n")
 
     output.write("reason:")

@@ -79,6 +79,13 @@ class CardBox(list):  # 道具箱，list类型的子类
 
     def isfull(self):  # 返回道具箱是否已满
         return len(self) >= MAX_CARDS
+      
+    def __str__(self):  # 输出道具名
+        str='['
+        for card in self:
+            str+=card.code+' '
+        str+=']'
+        return str
 
 
 class Vector:  # 矢量

@@ -218,6 +218,12 @@ class RacketAction:  # 球拍动作
         self.run = run_vector  # t1~t2跑位的动作矢量（移动方向及距离）
         self.card = (side, card)  # 对'SELF'/'OPNT'使用道具
 
+    def normalize(self):
+        # 全都规范为整数
+        self.bat= int(self.bat)
+        self.acc= int(self.acc)
+        self.run= int(self.run)
+
 
 class Racket:  # 球拍
     def __init__(self, side, pos):  # 选边'West'／'East'和位置
@@ -398,6 +404,8 @@ class Table:  # 球桌
                                               dict_side, dict_op_side, dict_ball, dict_card),
                                     player.datastore)
         # 设置迎球方的动作，迎球方使用的道具生效要到下一趟
+        # 将迎球方动作中的距离速度等值规整化为整数
+        player_action.normalize()
         player.set_action(player_action)
 
         # 执行迎球方的两个动作：迎球和加速

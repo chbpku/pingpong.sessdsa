@@ -115,6 +115,21 @@ def main():
     if len(sys.argv)==2:
         logname = sys.argv[1]
     else:
+        # 这里对当前目录进行搜索，找到一个字节数不为0的dat文件
+        import os,re
+        file_list = os.listdir()
+        # 编译正则表达式，寻找对应的文件名
+        r = re.compile(r'^\[(W|E)\.[A-Z]\]T_[^-]+-VS-T_[^.]+\.dat$')
+        # 首先保证是文件而不是目录
+        for name in filter(lambda f: os.path.isfile(f), file_list):
+            m = r.match(name)
+            if m is not None:
+                # 不为空，则拿到了一个正确的文件
+                logname = name[:-4] # 去除.dat后缀
+        else:
+            # 没找到，说明本目录下没有这个测试文件
+            raise NameError("No Test File in this directory.")
+                
         logname = '[W.T]T_idiot-VS-T_idiot'
     
     #读出log

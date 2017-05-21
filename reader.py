@@ -1,9 +1,11 @@
-# by 郭浩
+# reader (by Guo Hao)
+# 读取复盘数据，以文本形式输出
+
 import shelve
 
-filename = "[W.T]T_idiot-VS-T_idiot"  # 根据待转换文件名修改
-file = shelve.open(filename)
-with open("[W.T]T_idiot-VS-T_idiot.txt", 'w') as output:  # 根据输出文件名修改
+filename="[E.M]T_Unicorn-VS-T_idiot"  # 根据待转换文件名修改
+file=shelve.open(filename)
+with open("[E.M]T_Unicorn-VS-T_idiot.txt",'w') as output:  # 根据输出文件名修改
 
     output.write("DIM:")
     output.write(str(file['DIM']))
@@ -30,7 +32,7 @@ with open("[W.T]T_idiot-VS-T_idiot.txt", 'w') as output:  # 根据输出文件�
     output.write("\n")
 
     output.write("winner:")
-    output.write(file['winner'])
+    output.write(file['winner'] )
     output.write("\n")
 
     output.write("reason:")
@@ -63,6 +65,9 @@ with open("[W.T]T_idiot-VS-T_idiot.txt", 'w') as output:  # 根据输出文件�
         output.write("    run:")
         output.write(str(entry.side.action.run))
         output.write("\n")
+        output.write("  card_box:")
+        output.write(str(entry.side.card_box))
+        output.write("\n")
 
         output.write("op_side:")
         output.write("\n")
@@ -82,6 +87,9 @@ with open("[W.T]T_idiot-VS-T_idiot.txt", 'w') as output:  # 根据输出文件�
         output.write("\n")
         output.write("    run:")
         output.write(str(entry.op_side.action.run))
+        output.write("\n")
+        output.write("  card_box:")
+        output.write(str(entry.side.card_box))
         output.write("\n")
 
         output.write("ball:")

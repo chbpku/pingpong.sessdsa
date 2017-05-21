@@ -130,7 +130,7 @@ def main():
             # 没找到，说明本目录下没有这个测试文件
             raise NameError("No Test File in this directory.")
                 
-        logname = '[W.T]T_idiot-VS-T_idiot'
+        # logname = '[W.T]T_idiot-VS-T_idiot'
     
     #读出log
     log = readlog(logname)

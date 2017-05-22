@@ -237,13 +237,15 @@ class Racket:  # 球拍
     def __init__(self, side, pos):  # 选边'West'／'East'和位置
         self.side, self.pos = side, pos
         self.life = RACKET_LIFE
-        self.name = self.serve = self.play = self.action = self.datastore = None
+        self.name = self.serve = self.play = self.summarize = None
+        self.action = self.datastore = None
         self.card_box = CardBox()  # 道具箱，本方拥有的道具，不超过MAX_CARDS个，超过的话按照队列形式删除旧的道具。
 
-    def bind_play(self, name, serve, play):  # 绑定玩家名称和serve, play函数
+    def bind_play(self, name, serve, play, summarize):  # 绑定玩家名称和serve, play, summarize函数
         self.name = name
         self.serve = serve  # 发球函数
         self.play = play  # 接球函数
+        self.summarize = summarize  # 总结函数
 
     def set_action(self, action):  # 设置球拍动作，包括使用道具
         self.action = action
@@ -392,21 +394,27 @@ class Table:  # 球桌
         #    参数：t0时刻双方位置和体力值，以及跑位方的跑位方向；
         #    参数：球在t1时刻的位置和速度
 
-        dict_side = {'position': copy.copy(player.pos),
-                     'life': player.life,
-                     'cards': copy.copy(player.card_box)}
-        dict_op_side = {'position': None if self.active_card[1] == CARD_DSPR else copy.copy(op_player.pos),
-                        'life': op_player.life,
-                        'cards': copy.copy(op_player.card_box),
-                        'active_card': self.active_card,
-                        'accelerate': None if self.active_card[1] == CARD_DSPR else
-                        (-1 if op_player.action.acc < 0 else 1),
-                        'run_vector': None if self.active_card[1] == CARD_DSPR else
-                        (-1 if op_player.action.run < 0 else 1)}
-        dict_ball = {'position': copy.copy(self.ball.pos),
-                     'velocity': copy.copy(self.ball.velocity)}
-        dict_card = {'card_tick': self.card_tick,
-                     'cards': copy.copy(self.cards)}
+        dict_side = {
+            'name': player.name,
+            'position': copy.copy(player.pos),
+            'life': player.life,
+            'cards': copy.copy(player.card_box)}
+        dict_op_side = {
+            'name': player.name,
+            'position': None if self.active_card[1] == CARD_DSPR else copy.copy(op_player.pos),
+            'life': op_player.life,
+            'cards': copy.copy(op_player.card_box),
+            'active_card': self.active_card,
+            'accelerate': None if self.active_card[1] == CARD_DSPR else
+            (-1 if op_player.action.acc < 0 else 1),
+            'run_vector': None if self.active_card[1] == CARD_DSPR else
+            (-1 if op_player.action.run < 0 else 1)}
+        dict_ball = {
+            'position': copy.copy(self.ball.pos),
+            'velocity': copy.copy(self.ball.velocity)}
+        dict_card = {
+            'card_tick': self.card_tick,
+            'cards': copy.copy(self.cards)}
         # 调用，返回迎球方的动作
         player_action = player.play(TableData(self.tick, self.tick_step,
                                               dict_side, dict_op_side, dict_ball, dict_card),
@@ -453,6 +461,17 @@ class Table:  # 球桌
             return
 
         self.change_side()  # 换边迎球
+        return
+
+    def postcare(self):  # 善后处理
+        west_player = self.players['West']
+        east_player = self.players['East']
+        west_player.summarize(self.tick, self.winner, self.reason,
+                              RacketData(west_player), RacketData(east_player),
+                              BallData(self.ball), west_player.datastore)
+        east_player.summarize(self.tick, self.winner, self.reason,
+                              RacketData(west_player), RacketData(east_player),
+                              BallData(self.ball), west_player.datastore)
         return
 
 

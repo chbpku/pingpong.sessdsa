@@ -2,11 +2,12 @@ from table import Table, LogEntry, RacketData, BallData, DIM, TMAX, PL, RS
 import shelve
 
 
-def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
+def race(west_name, west_serve, west_play, west_summarize,
+         east_name, east_serve, east_play, east_summarize):
     # 生成球桌
     main_table = Table()
-    main_table.players['West'].bind_play(west_name, west_serve, west_play)
-    main_table.players['East'].bind_play(east_name, east_serve, east_play)
+    main_table.players['West'].bind_play(west_name, west_serve, west_play, west_summarize)
+    main_table.players['East'].bind_play(east_name, east_serve, east_play, east_summarize)
     log = list()
 
     # 读取历史数据，文件名为"DS-<name>"
@@ -39,7 +40,10 @@ def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
                         RacketData(main_table.players[main_table.op_side]),
                         BallData(main_table.ball)))
 
-    # 终局，保存双方的历史数据，文件名为"DS-<name>"
+    # 终局，让双方进行本局总结
+    main_table.postcare()
+
+    # 最后，保存双方的历史数据，文件名为"DS-<name>"
     for side in ('West', 'East'):
         d = shelve.open('DS-%s' % (main_table.players[side].name,))
         d['datastore'] = main_table.players[side].datastore
@@ -71,8 +75,6 @@ def race(west_name, west_serve, west_play, east_name, east_serve, east_play):
 
 import os
 
-players = list()
-
 # 取得所有以T_开始文件名的算法文件名
 players = [f[:-3] for f in os.listdir('.') if os.path.isfile(f) and f[-3:] == '.py' and f[:2] == 'T_']
 
@@ -80,4 +82,4 @@ for west_name in players:
     for east_name in players:
         exec('import %s as WP' % (west_name,))
         exec('import %s as EP' % (east_name,))
-        race(west_name, WP.serve, WP.play, east_name, EP.serve, EP.play)
+        race(west_name, WP.serve, WP.play, WP.summarize, east_name, EP.serve, EP.play, EP.summarize)

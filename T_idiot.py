@@ -12,3 +12,9 @@ def serve(ds):
 # 函数需要返回一个RacketAction对象
 def play(tb, ds):
     return RacketAction(tb.tick, tb.ball['position'].y - tb.side['position'].y, 0, 0, None, None)
+
+# 对局后保存历史数据函数
+# ds为函数可以利用的存储字典
+# 本函数在对局结束后调用，用于双方分析和保存历史数据
+def summarize(tick, winner, reason, west, east, ball, ds):
+    return

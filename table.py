@@ -29,8 +29,8 @@ MAX_CARDS = 3
 # 球桌上最多道具
 MAX_TABLE_CARDS = 10
 # 卡牌代码
-CARD_SPIN = 'SP'  # 旋转球：用于抵消被用道具方施加在球拍上的加速，使之正常反弹回来；param=0，增加的速度乘以parm
-CARD_SPIN_PARAM = 0
+CARD_SPIN = 'SP'  # 旋转球：用于抵消被用道具方施加在球拍上的加速，使之正常反弹回来；param=0.5，增加的速度乘以parm
+CARD_SPIN_PARAM = 0.5
 CARD_DSPR = 'DS'  # 隐身术：隐藏被用道具方的位置和跑位方向1次；param=0，位置乘以parm，方向乘以parm
 CARD_DSPR_PARAM = 0
 CARD_INCL = 'IL'  # 补血包：给被用道具方补血（增加体力值）；param=2000，life加上param
@@ -126,7 +126,7 @@ class Ball:  # 球
             param = CARD_SPIN_PARAM
 
         # 球改变速度，仅垂直方向
-        self.velocity.y += acc_vector * param
+        self.velocity.y += int(acc_vector * param)
 
     # 以下是李逸飞同学的超强算法
     # 用于检测是否得到道具。有错误的话，锅由李逸飞来背。邮箱：1500012435@pku.edu.cn

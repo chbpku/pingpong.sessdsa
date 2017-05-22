@@ -471,7 +471,7 @@ class Table:  # 球桌
                               BallData(self.ball), west_player.datastore)
         east_player.summarize(self.tick, self.winner, self.reason,
                               RacketData(west_player), RacketData(east_player),
-                              BallData(self.ball), west_player.datastore)
+                              BallData(self.ball), east_player.datastore)
         return
 
 

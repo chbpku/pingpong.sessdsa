@@ -16,8 +16,8 @@ import shelve
 import sys
 
 #这个参数用来调整时间流逝的速率
-#m=1时, 一来回需要3.6秒
-m = 1
+#game_speed=1时, 一来回需要3.6秒
+game_speed = 1
 #各种参数
 x, y = 18, 10
 s_size = (1024, 600)
@@ -162,7 +162,7 @@ def main():
         writeinfo(screen, player, font)
         draw_all(screen, ball_pos, player['West'], player['East'])
 
-        t_passed = clock.tick()*m
+        t_passed = clock.tick()*game_speed
 
         #最后一次记录之后再走半回合
         if over and tick > next_tick+1800:

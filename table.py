@@ -463,6 +463,7 @@ class Table:  # 球桌
             self.reason = "life_out"
             return
 
+        self.card_tick += self.tick_step  # 道具计时增加
         self.tick += self.tick_step  # 时间从t0到t1
         if self.tick >= TMAX:
             # 时间到，生命值高的胜出

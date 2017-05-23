@@ -12,16 +12,16 @@ BALL_POS = (DIM[0], (DIM[3] - DIM[2]) // 2)
 BALL_V = (1000, 1000)
 # 球拍的生命值，100个回合以上
 RACKET_LIFE = 100000
-# 迎球和跑位扣减距离除以系数的平方（LIFE=0-10000)
-FACTOR_DISTANCE = 10000
-# 加速则扣减速度除以系数结果的平方（LIFE=0-400)
-FACTOR_SPEED = 50
+# 迎球和跑位扣减距离除以系数的平方（LIFE=0-2500)
+FACTOR_DISTANCE = 20000
+# 加速则扣减速度除以系数结果的平方（LIFE=0-2500)
+FACTOR_SPEED = 20
 # 游戏方代码
 PL = {'West': 'W', 'East': 'E'}
 # 游戏结束原因代码
 RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T'}
 # 道具出现频率每多少ticks出现一个道具
-CARD_FREQ = 40000
+CARD_FREQ = 4000
 # 道具出现的空间范围
 CARD_EXTENT = (-800000, 800000, 100000, 900000)
 # 道具箱的最大容量

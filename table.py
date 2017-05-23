@@ -136,8 +136,8 @@ class Ball:  # 球
         # card经过多次对称后，位置为(x1,±y1+2*k*l)
         # 点到直线距离公式dist=|-v*x1+u*(±y1+2*k*l)+v*x0-u*y0|/|self.velocity|
         # 记-v*x1+u*(±y1)+v*x0-u*y0=A1,A2,u*2*l为delta。则求最短距离，即是求A1%delta,A2%delta,-A1%delta,-A2%delta中最小值，再除以self.velocity的模长。
-        A1 = (self.velocity.y * (-card.pos.x + self.pos.x) + self.velocity.y * (card.pos.y - self.pos.y))
-        A2 = (self.velocity.y * (-card.pos.x + self.pos.x) + self.velocity.y * (-card.pos.y - self.pos.y))
+        A1 = (self.velocity.y * (-card.pos.x + self.pos.x) + self.velocity.x * (card.pos.y - self.pos.y))
+        A2 = (self.velocity.y * (-card.pos.x + self.pos.x) + self.velocity.x * (-card.pos.y - self.pos.y))
         delta = (2 * abs(self.velocity.x) * self.extent[3])
         return min(A1 % delta, -A1 % delta, A2 % delta, -A2 % delta) / math.sqrt(
             self.velocity.x ** 2 + self.velocity.y ** 2) < eps
@@ -150,6 +150,9 @@ class Ball:  # 球
 
         # x方向的位置
         self.pos.x += self.velocity.x * ticks
+
+        if self.velocity.y == 0:
+            return 0, hit_cards
 
         # 以下是李逸飞同学的简短新算法
         # ===========NEW!=============

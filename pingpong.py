@@ -63,8 +63,8 @@ def race(west_name, west_serve, west_play, west_summarize,
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
+    print("#")
     print("tick:" + str(main_table.tick))
-    print("tickstep:" + str(main_table.tick_step))
     print("Westlife:" + str(main_table.players['West'].life))
     print("Eastlife:" + str(main_table.players['East'].life))
 

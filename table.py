@@ -37,7 +37,7 @@ CARD_INCL = 'IL'  # 补血包：给被用道具方补血（增加体力值）；
 CARD_INCL_PARAM = 2000
 CARD_DECL = 'DL'  # 掉血包：给被用道具方减血（减少体力值）；param=2000，life减去param
 CARD_DECL_PARAM = 2000
-CARD_TLPT = 'TP'  # 瞬移术：被用道具方可以移动一段距离而不消耗体力值；param=250000，只作用在迎球阶段
+CARD_TLPT = 'TP'  # 瞬移术：被用道具方可以移动一段距离而不消耗体力值；param=250000，只作用在跑位阶段
 CARD_TLPT_PARAM = 250000
 CARD_AMPL = 'AM'  # 变压器：放大被用道具方的体力值损失；param=2；体力值损失增加1倍。
 CARD_AMPL_PARAM = 2
@@ -81,11 +81,11 @@ class CardBox(list):  # 道具箱，list类型的子类
         return len(self) >= MAX_CARDS
 
     def __str__(self):  # 输出道具名
-        str = '['
+        ret_str = '['
         for card in self:
-            str += card.code + ' '
-        str += ']'
-        return str
+            ret_str += card.code + ' '
+        ret_str += ']'
+        return ret_str
 
 
 class Vector:  # 矢量
@@ -103,6 +103,7 @@ class Vector:  # 矢量
 
     def __str__(self):
         return "<%s,%s>" % (self.x, self.y)
+
     __repr__ = __str__
 
 
@@ -315,6 +316,12 @@ class BallData:  # 球的信息，记录日志用
             self.pos, self.velocity = ball_or_pos, velocity
 
 
+class CardData:  # 道具信息，记录日志用
+    def __init__(self, card_tick, cards):
+        self.card_tick = card_tick
+        self.cards = copy.copy(cards)  # 道具对象的列表，数量上限为MAX_TABLE_CARDS
+
+
 class Table:  # 球桌
     def __init__(self):
         # 桌面坐标系的范围，单位"pace"
@@ -480,8 +487,9 @@ class Table:  # 球桌
 
 
 class LogEntry:
-    def __init__(self, tick, side, op_side, ball):
+    def __init__(self, tick, side, op_side, ball, card):
         self.tick = tick
         self.side = side
         self.op_side = op_side
         self.ball = ball
+        self.card = card

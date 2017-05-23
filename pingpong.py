@@ -1,4 +1,4 @@
-from table import Table, LogEntry, RacketData, BallData, DIM, TMAX, PL, RS
+from table import Table, LogEntry, RacketData, BallData, CardData, DIM, TMAX, PL, RS
 import shelve
 
 
@@ -30,7 +30,8 @@ def race(west_name, west_serve, west_play, west_summarize,
         log.append(LogEntry(main_table.tick,
                             RacketData(main_table.players[main_table.side]),
                             RacketData(main_table.players[main_table.op_side]),
-                            BallData(main_table.ball)))
+                            BallData(main_table.ball),
+                            CardData(main_table.card_tick, main_table.cards)))
         # 运行一趟
         main_table.time_run()
 
@@ -38,7 +39,8 @@ def race(west_name, west_serve, west_play, west_summarize,
     log.append(LogEntry(main_table.tick,
                         RacketData(main_table.players[main_table.side]),
                         RacketData(main_table.players[main_table.op_side]),
-                        BallData(main_table.ball)))
+                        BallData(main_table.ball),
+                        CardData(main_table.card_tick, main_table.cards)))
 
     # 终局，让双方进行本局总结
     main_table.postcare()

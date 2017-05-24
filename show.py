@@ -198,7 +198,7 @@ def main():
         t_passed = clock.tick() * game_speed
 
         # 最后一次记录之后再走半回合
-        if over and tick > next_tick + 1800:
+        if over and tick >= next_tick + 1800:
             tick = next_tick+1800
             screen.blit(font.render(reason, True, (0,0,0)),(center[0]-50, center[1]-220))
             screen.blit(font.render("%s win!"%player[winner].name, True, (0,0,0)),(center[0]-60, center[1]-270))

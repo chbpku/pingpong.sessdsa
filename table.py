@@ -263,7 +263,7 @@ class Racket:  # 球拍
 
     def get_velocity(self):
         # 球拍的全速是球X方向速度，按照体力值比例下降，当体力值下降到55%，将出现死角
-        return int((self.life / RACKET_LIFE) * BALL_V[1])
+        return int((self.life / RACKET_LIFE) * BALL_V[0])
 
     def update_pos_bat(self, tick_step, active_card):
         # 如果指定迎球的距离大于最大速度的距离，则采用最大速度距离

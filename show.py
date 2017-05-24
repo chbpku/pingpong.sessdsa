@@ -47,11 +47,12 @@ def readlog(logname):
 def getdata(alog):
     d = {}
     d['ball_pos'] = alog.ball.pos
-    d['ball_v'] = alog.ball.velocity
+    d['ball_v']= alog.ball.velocity
     d['tick'] = alog.tick
     d['player'] = {}
     d['player'][alog.side.side] = alog.side
     d['player'][alog.op_side.side] = alog.op_side
+    d['cards'] = alog.card.cards
     return d
 
 

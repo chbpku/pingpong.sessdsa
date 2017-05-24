@@ -17,7 +17,7 @@ import sys
 
 # 这个参数用来调整时间流逝的速率
 # game_speed=1时, 一来回需要3.6秒
-game_speed = 10
+game_speed = 1
 # 各种参数
 x, y = 18, 10
 s_size = (1024, 600)
@@ -33,12 +33,14 @@ table = (
     (center[0] - x / 2 * n, center[1] + y / 2 * n),)
 
 
-# 读取文件, 返回文件中的log类
+#读取文件, 返回文件中的log类, 胜利者, 和胜利原因
 def readlog(logname):
     d = shelve.open(logname)
     log = d['log']
+    winner = d['winner']
+    reason = d['reason']
     d.close()
-    return log
+    return log, winner, reason
 
 
 # 把log类转换成字典
@@ -125,6 +127,14 @@ def writeinfo(screen, player, font):
     screen.blit(font.render(str(int(player['West'].life)), True, (0, 0, 0)), (table[0][0] - 24, table[0][1] - 100))
     screen.blit(font.render(str(int(player['East'].life)), True, (0, 0, 0)), (table[1][0] - 80, table[1][1] - 100))
 
+# 画道具
+def draw_card(screen, cards, font):
+    for card in cards:
+        x, y = pos_trans(card.pos)
+        image = pygame.image.load('%s.png'%card.code).convert_alpha()
+        x-= image.get_width() / 2
+        y-= image.get_height() / 2
+        screen.blit(image, (x, y))
 
 def main():
     # 判断有无命令行参数
@@ -148,13 +158,14 @@ def main():
         #else:
             # 没找到，说明本目录下没有这个测试文件
          #   raise NameError("No Test File in this directory.")
-
-    # 读出log
+        
     for i in range(len(namelist)):
         print('第',i,'个',namelist[i])
     ssssss=int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' %(len(namelist)-1)))#序号
     logname=namelist[ssssss]
-    log = readlog(logname)
+    
+    # 读出log, winner, reason
+    log, winner, reason = readlog(logname)
 
     # pygame初始化
     pygame.init()
@@ -181,13 +192,16 @@ def main():
         # 画画
         screen.fill((255, 255, 255))
         writeinfo(screen, player, font)
+        draw_card(screen, d_current['cards'], font)
         draw_all(screen, ball_pos, player['West'], player['East'])
 
         t_passed = clock.tick() * game_speed
 
         # 最后一次记录之后再走半回合
         if over and tick > next_tick + 1800:
-            screen.blit(font.render('Game over for%s' %(logname[:5]), True, (0, 0, 0)), (center[0] - 100, center[1]))
+            tick = next_tick+1800
+            screen.blit(font.render(reason, True, (0,0,0)),(center[0]-50, center[1]-220))
+            screen.blit(font.render("%s win!"%player[winner].name, True, (0,0,0)),(center[0]-60, center[1]-270))
             t_passed = 0
 
         # 时间流逝和球的移动

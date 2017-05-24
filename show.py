@@ -181,7 +181,8 @@ def main():
 
     # 读出log, winner, reason
     log, winner, reason = readlog(logname)
-
+    over = False
+    
     # pygame初始化
     pygame.init()
     screen = pygame.display.set_mode(s_size)
@@ -191,14 +192,20 @@ def main():
     # 读取两轮数据
     d_current = getdata(log.pop(0))
     player = d_current['player']
-    d_next = getdata(log.pop(0))
     ball_pos = d_current['ball_pos']
     ball_v = d_current['ball_v']
     tick = d_current['tick']
-    next_tick = d_next['tick']
+    
+    next_tick = 0
+    
+    if len(log)>1:
+        d_next = getdata(log.pop(0))
+        next_tick = d_next['tick']
+    else:
+        over = True
 
     clock.tick()
-    over = False
+    
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:

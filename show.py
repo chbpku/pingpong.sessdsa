@@ -137,7 +137,19 @@ def draw_card(screen, cards, font):
         x -= image.get_width() / 2
         y -= image.get_height() / 2
         screen.blit(image, (x, y))
-
+        
+#画道具箱
+def draw_card_box(screen, player):
+    i = 0
+    for card in player['West'].card_box:
+        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
+        screen.blit(image, (150-image.get_width()/2, 170+i))
+        i+=image.get_height()+10
+    i = 0
+    for card in player['East'].card_box:
+        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
+        screen.blit(image, (s_size[0]-150-image.get_width()/2, 170+i))
+        i+=image.get_height()+10
 
 def main():
     # 判断有无命令行参数
@@ -196,6 +208,7 @@ def main():
         screen.fill((255, 255, 255))
         writeinfo(screen, player, font)
         draw_card(screen, d_current['cards'], font)
+        draw_card_box(screen, player)
         draw_all(screen, ball_pos, player['West'], player['East'])
 
         t_passed = clock.tick() * game_speed

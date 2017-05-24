@@ -439,7 +439,7 @@ class Table:  # 球桌
         player.update_pos_bat(self.tick_step, self.active_card)
         if not (player.pos == self.ball.pos):
             # 没接上球
-            print(player.pos, self.ball.pos)
+            print("player_pos:"+str(player.pos), "ball_pos:"+str(self.ball.pos))
             self.finished = True
             self.winner = self.op_side
             self.reason = "miss_ball"

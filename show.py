@@ -33,7 +33,7 @@ table = (
     (center[0] - x / 2 * n, center[1] + y / 2 * n),)
 
 
-#读取文件, 返回文件中的log类, 胜利者, 和胜利原因
+# 读取文件, 返回文件中的log类, 胜利者, 和胜利原因
 def readlog(logname):
     d = shelve.open(logname)
     log = d['log']
@@ -47,7 +47,7 @@ def readlog(logname):
 def getdata(alog):
     d = {}
     d['ball_pos'] = alog.ball.pos
-    d['ball_v']= alog.ball.velocity
+    d['ball_v'] = alog.ball.velocity
     d['tick'] = alog.tick
     d['player'] = {}
     d['player'][alog.side.side] = alog.side
@@ -128,14 +128,16 @@ def writeinfo(screen, player, font):
     screen.blit(font.render(str(int(player['West'].life)), True, (0, 0, 0)), (table[0][0] - 24, table[0][1] - 100))
     screen.blit(font.render(str(int(player['East'].life)), True, (0, 0, 0)), (table[1][0] - 80, table[1][1] - 100))
 
+
 # 画道具
 def draw_card(screen, cards, font):
     for card in cards:
         x, y = pos_trans(card.pos)
-        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
-        x-= image.get_width() / 2
-        y-= image.get_height() / 2
+        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
+        x -= image.get_width() / 2
+        y -= image.get_height() / 2
         screen.blit(image, (x, y))
+
 
 def main():
     # 判断有无命令行参数
@@ -146,25 +148,25 @@ def main():
         import os, re
         file_list = os.listdir(os.getcwd())
         # 编译正则表达式，寻找对应的文件名
-        r = re.compile(r'^\[[EW]\.[A-Z]\]T_[^-]+-VS-T_[^.]+\.dat$')
+        r = re.compile(r'^\[[EW]\.[A-Z]\]T_[^-]+-VS-T_[^.]+\.(dat|db)$')
         # 首先保证是文件而不是目录，且不为空
-        namelist=[]#用来保存所有对战名称
+        namelist = []  # 用来保存所有对战名称
         print('请注意，本代码不支持未找到的报错，希望有人能改正\n')
         for name in filter(lambda f: os.path.isfile(f) and os.path.getsize(f) != 0, file_list):
             m = r.match(name)
             if m is not None:
                 # 不为空，则拿到了一个正确的文件
-                logname = name[:-4]  # 去除.dat后缀
+                logname = name[:name.rindex('.')]  # 去除.dat/.db后缀
                 namelist.append(logname)
-        #else:
-            # 没找到，说明本目录下没有这个测试文件
-         #   raise NameError("No Test File in this directory.")
-        
+                # else:
+                # 没找到，说明本目录下没有这个测试文件
+                #   raise NameError("No Test File in this directory.")
+
     for i in range(len(namelist)):
-        print('第',i,'个',namelist[i])
-    ssssss=int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' %(len(namelist)-1)))#序号
-    logname=namelist[ssssss]
-    
+        print('第', i, '个', namelist[i])
+    ssssss = int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' % (len(namelist) - 1)))  # 序号
+    logname = namelist[ssssss]
+
     # 读出log, winner, reason
     log, winner, reason = readlog(logname)
 
@@ -200,14 +202,15 @@ def main():
 
         # 最后一次记录之后再走半回合
         if over and tick >= next_tick + 1800:
-            tick = next_tick+1800
-            screen.blit(font.render(reason, True, (0,0,0)),(center[0]-50, center[1]-220))
-            screen.blit(font.render("%s win!"%player[winner].name, True, (0,0,0)),(center[0]-60, center[1]-270))
+            tick = next_tick + 1800
+            screen.blit(font.render(reason, True, (0, 0, 0)), (center[0] - 50, center[1] - 220))
+            screen.blit(font.render("%s win!" % player[winner].name, True, (0, 0, 0)),
+                        (center[0] - 60, center[1] - 270))
             t_passed = 0
 
         # 时间流逝和球的移动
         tick += t_passed
-        screen.blit(font.render("tick: %s"%tick, True, (0,0,0)),(20, 20))
+        screen.blit(font.render("tick: %s" % tick, True, (0, 0, 0)), (20, 20))
         ball_pos.x += ball_v.x * t_passed
         ball_pos.y += ball_v.y * t_passed
 

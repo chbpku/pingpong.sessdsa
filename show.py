@@ -132,7 +132,7 @@ def writeinfo(screen, player, font):
 def draw_card(screen, cards, font):
     for card in cards:
         x, y = pos_trans(card.pos)
-        image = pygame.image.load('%s.png'%card.code).convert_alpha()
+        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
         x-= image.get_width() / 2
         y-= image.get_height() / 2
         screen.blit(image, (x, y))
@@ -207,6 +207,7 @@ def main():
 
         # 时间流逝和球的移动
         tick += t_passed
+        screen.blit(font.render("tick: %s"%tick, True, (0,0,0)),(20, 20))
         ball_pos.x += ball_v.x * t_passed
         ball_pos.y += ball_v.y * t_passed
 

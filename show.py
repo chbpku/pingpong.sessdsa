@@ -187,7 +187,7 @@ def main():
 
         # 最后一次记录之后再走半回合
         if over and tick > next_tick + 1800:
-            screen.blit(font.render('Game over reason for%s' %(name[:5]), True, (0, 0, 0)), (center[0] - 50, center[1]))
+            screen.blit(font.render('Game over for%s' %(logname[:5]), True, (0, 0, 0)), (center[0] - 100, center[1]))
             t_passed = 0
 
         # 时间流逝和球的移动

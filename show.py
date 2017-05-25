@@ -155,6 +155,8 @@ def main():
     # 判断有无命令行参数
     if len(sys.argv) == 2:
         logname = sys.argv[1]
+        # 兼容原来的命令行参数查找模式
+        namelist = [logname]
     else:
         # 这里对当前目录进行搜索，找到一个字节数不为0的dat文件
         import os, re
@@ -173,12 +175,27 @@ def main():
                 # else:
                 # 没找到，说明本目录下没有这个测试文件
                 #   raise NameError("No Test File in this directory.")
-
-    for i in range(len(namelist)):
-        print('第', i, '个', namelist[i])
-    ssssss = int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' % (len(namelist) - 1)))  # 序号
-    logname = namelist[ssssss]
-
+    while True:
+        try:
+            if not namelist:
+                raise NameError
+            for i in range(len(namelist)):
+                print('第', i, '个', namelist[i])
+            ssssss = int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' % (len(namelist) - 1)))  # 序号
+            
+            logname = namelist[ssssss]
+            break
+        except ValueError as e:
+            # 输入了一个非数字
+            print('请输入合法数字！')
+        except IndexError as e:
+            # 列表越界
+            print('请输入范围内的数字（0-%d）'%(len(namelist)-1))
+        except NameError as e:
+            print('没有测试文件！')
+            input('请输入回车键退出程序')
+            exit()
+            
     # 读出log, winner, reason
     log, winner, reason = readlog(logname)
     over = False

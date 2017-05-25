@@ -43,3 +43,5 @@ A：我们采用SHA1散列得到了各组分区的方案如下：
     ('W', ('ZULU 贺旎妮', 'bc880e24ca822e6c5077d36a27e9d1e4f88ece90')),
     ('W', ('CHARLIE 郭浩(地空)', 'e959fddf46cedf66f3babbb23969e0c848545ee9'))]
 ```
+
+本结果计算的程序代码参见team.py。

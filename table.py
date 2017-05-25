@@ -98,8 +98,8 @@ class Vector:  # 矢量
     def __add__(self, other):
         return self.__class__(self.x + other.x, self.y + other.y)
 
-    def __eq__(self, other):  # 判定相等，考虑误差+／-1
-        return abs(self.x - other.x) <= 1 and abs(self.y - other.y) <= 1
+    def __eq__(self, other):  # 判定相等，考虑误差+／-1000
+        return abs(self.x - other.x) <= 1000 and abs(self.y - other.y) <= 1000
 
     def __str__(self):
         return "<%s,%s>" % (self.x, self.y)
@@ -132,7 +132,7 @@ class Ball:  # 球
 
     # 以下是李逸飞同学的超强算法
     # 用于检测是否得到道具。有错误的话，锅由李逸飞来背。邮箱：1500012435@pku.edu.cn
-    def get_card(self, card, eps=1):
+    def get_card(self, card, eps=1000):
         # 多写点注释。self.pos:(x0,y0),card.pos:(x1,y1),self.velocity:(u,v),self.extent[3]=L
         # 直线方程为 l:-v*x+u*y+v*x0-u*y0=0
         # card经过多次对称后，位置为(x1,±y1+2*k*l)
@@ -439,7 +439,7 @@ class Table:  # 球桌
         player.update_pos_bat(self.tick_step, self.active_card)
         if not (player.pos == self.ball.pos):
             # 没接上球
-            print("player_pos:"+str(player.pos), "ball_pos:"+str(self.ball.pos))
+            print("player_pos:" + str(player.pos), "ball_pos:" + str(self.ball.pos))
             self.finished = True
             self.winner = self.op_side
             self.reason = "miss_ball"

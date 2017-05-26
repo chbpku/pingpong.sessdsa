@@ -12,8 +12,9 @@
 from table import *
 import pygame
 from pygame.locals import *
-import shelve
+import shelve,time
 import sys
+Clock= pygame.time.Clock()
 
 # 这个参数用来调整时间流逝的速率
 # game_speed=1时, 一来回需要3.6秒
@@ -207,6 +208,7 @@ def main():
     clock.tick()
     
     while True:
+        Clock.tick(100)#限制FPS
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()

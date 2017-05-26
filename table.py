@@ -98,8 +98,8 @@ class Vector:  # 矢量
     def __add__(self, other):
         return self.__class__(self.x + other.x, self.y + other.y)
 
-    def __eq__(self, other):  # 判定相等，考虑误差+／-1000
-        return abs(self.x - other.x) <= 1000 and abs(self.y - other.y) <= 1000
+    def __eq__(self, other):  # 判定相等，考虑误差+／-2000
+        return abs(self.x - other.x) <= 2000 and abs(self.y - other.y) <= 2000
 
     def __str__(self):
         return "<%s,%s>" % (self.x, self.y)
@@ -132,7 +132,7 @@ class Ball:  # 球
 
     # 以下是李逸飞同学的超强算法
     # 用于检测是否得到道具。有错误的话，锅由李逸飞来背。邮箱：1500012435@pku.edu.cn
-    def get_card(self, card, eps=1000):
+    def get_card(self, card, eps=2000):
         # 多写点注释。self.pos:(x0,y0),card.pos:(x1,y1),self.velocity:(u,v),self.extent[3]=L
         # 直线方程为 l:-v*x+u*y+v*x0-u*y0=0
         # card经过多次对称后，位置为(x1,±y1+2*k*l)

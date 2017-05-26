@@ -248,6 +248,7 @@ class Racket:  # 球拍
     def __init__(self, side, pos):  # 选边'West'／'East'和位置
         self.side, self.pos = side, pos
         self.life = RACKET_LIFE
+        self.bat_lf = self.run_lf = self.acc_lf = self.card_lf = 0  #各种操作对生命值的损耗
         self.name = self.serve = self.play = self.summarize = None
         self.action = self.datastore = None
         self.card_box = CardBox()  # 道具箱，本方拥有的道具，不超过MAX_CARDS个，超过的话按照队列形式删除旧的道具。
@@ -276,8 +277,9 @@ class Racket:  # 球拍
         bat_distance = sign(self.action.bat) * min(abs(self.action.bat), self.get_velocity() * tick_step)
         self.pos.y += bat_distance
         # 减少生命值
-        self.life -= (abs(bat_distance) ** 2 // FACTOR_DISTANCE ** 2) * \
-                     (CARD_AMPL_PARAM if active_card[1] == CARD_AMPL else 1)
+        self.bat_lf = -(abs(bat_distance) ** 2 // FACTOR_DISTANCE ** 2) * \
+                      (CARD_AMPL_PARAM if active_card[1] == CARD_AMPL else 1)
+        self.life += self.bat_lf
 
     def update_pos_run(self, tick_step, active_card):
         # 如果指定跑位的距离大于最大速度的距离，则采用最大速度距离
@@ -285,15 +287,18 @@ class Racket:  # 球拍
         self.pos.y += run_distance
         # 减少生命值
         param = 0
+        self.run_lf = 0
         if active_card[1] == CARD_TLPT:  # 如果碰到瞬移卡，则从距离减去CARD_TLPT_PARAM再计算体力值减少
             param = CARD_TLPT_PARAM
         if abs(run_distance) - param > 0:
-            self.life -= (abs(run_distance) - param) ** 2 // FACTOR_DISTANCE ** 2
+            self.run_lf = -(abs(run_distance) - param) ** 2 // FACTOR_DISTANCE ** 2
+            self.life += self.run_lf
 
     def update_acc(self, active_card):
         # 按照给球加速度的指标减少生命值
-        self.life -= (abs(self.action.acc) ** 2 // FACTOR_SPEED ** 2) * \
-                     (CARD_AMPL_PARAM if active_card[1] == CARD_AMPL else 1)
+        self.acc_lf = -(abs(self.action.acc) ** 2 // FACTOR_SPEED ** 2) * \
+                      (CARD_AMPL_PARAM if active_card[1] == CARD_AMPL else 1)
+        self.life += self.acc_lf
 
 
 class TableData:  # 球桌信息，player计算用
@@ -309,6 +314,7 @@ class TableData:  # 球桌信息，player计算用
 class RacketData:  # 球拍信息，记录日志用
     def __init__(self, racket):
         self.side, self.name, self.life = racket.side, racket.name, racket.life
+        self.bat_lf, self.acc_lf, self.run_lf, self.card_lf = racket.bat_lf, racket.acc_lf, racket.run_lf, racket.card_lf
         self.pos, self.action = copy.copy(racket.pos), copy.copy(racket.action)
         self.card_box = copy.copy(racket.card_box)
 
@@ -399,14 +405,16 @@ class Table:  # 球桌
 
         # 让跑位方的道具生效
         self.active_card = op_player.action.card
+        player.card_lf = 0
+        op_player.card_lf = 0
         if self.active_card[1] == CARD_DECL:
             # 让迎球方掉血
-            player.life -= CARD_DECL_PARAM
-
+            player.card_lf = - CARD_DECL_PARAM
+            player.life += player.card_lf
         if self.active_card[1] == CARD_INCL:
             # 让跑位方加血
-            op_player.life += CARD_INCL_PARAM
-
+            op_player.card_lf = CARD_INCL_PARAM
+            op_player.life += op_player.card_lf
         # 3，调用迎球方的算法
         #    参数：t0时刻双方位置和体力值，以及跑位方的跑位方向；
         #    参数：球在t1时刻的位置和速度

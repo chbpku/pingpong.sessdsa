@@ -71,19 +71,21 @@ def race(west_name, west_serve, west_play, west_summarize,
     print("Eastlife:" + str(main_table.players['East'].life))
 
     # 终局打印信息输出
-    print("%s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d tick" % (main_table.winner, main_table.reason,
-                                                west_name,main_table.players['West'].life, east_name,main_table.players['East'].life,main_table.tick)
+    print("%s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d tick" %
+          (main_table.winner, main_table.reason,
+           west_name, main_table.players['West'].life,
+           east_name, main_table.players['East'].life, main_table.tick))
 
-    
+
 import os
 
 # 取得所有以T_开始文件名的算法文件名
 players = [f[:-3] for f in os.listdir('.') if os.path.isfile(f) and f[-3:] == '.py' and f[:2] == 'T_']
-i=0
+i = 0
 for west_name in players:
     for east_name in players:
-        print('----------------------''第',i,'局''-------------------------')
+        print('----------------------''第', i, '局''-------------------------')
         exec('import %s as WP' % (west_name,))
         exec('import %s as EP' % (east_name,))
-        race(west_name, WP.serve, WP.play, WP.summarize, east_name, EP.serve, EP.play, EP.summarize)        
-        i=i+1
+        race(west_name, WP.serve, WP.play, WP.summarize, east_name, EP.serve, EP.play, EP.summarize)
+        i = i + 1

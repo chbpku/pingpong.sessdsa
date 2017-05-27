@@ -156,7 +156,7 @@ def writeChange(screen, player, font):
 def draw_card(screen, cards, font):
     for card in cards:
         x, y = pos_trans(card.pos)
-        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
+        image=pygame.transform.rotozoom(pygame.image.load('%s.png' % card.code.lower()),0,0.6)
         x -= image.get_width() / 2
         y -= image.get_height() / 2
         screen.blit(image, (x, y))

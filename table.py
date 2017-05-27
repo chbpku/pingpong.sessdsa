@@ -378,7 +378,8 @@ class Table:  # 球桌
     def serve(self):  # 发球，始终是West发球
         self.tick = 0  # 当前的时刻tick
         player = self.players[self.side]  # 现在side是West
-        pos_y, velocity_y = player.serve(player.datastore)  # 只提供y方向的位置和速度
+        pos_y, velocity_y = player.serve(self.players[self.op_side].name,
+                                         player.datastore)  # 只提供y方向的位置和速度
         self.ball = Ball(DIM, Position(BALL_POS[0], pos_y),
                          Vector(BALL_V[0], velocity_y))  # 球的初始化
         self.change_side()  # 换边迎球

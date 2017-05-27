@@ -1,4 +1,5 @@
-# show by pkuzhd
+#show by 张颢丹
+#2015/5/27 3:40 冀锐 修改 实现扣血详细信息的显示
 # 读取对局文件, 把对局可视化
 # 如果带了命令行参数, 打开参数里的文件
 # 否则根据文件中的文件名打开文件(第116行附近)
@@ -12,9 +13,10 @@
 from table import *
 import pygame
 from pygame.locals import *
-import shelve,time
+import shelve, time
 import sys
-Clock= pygame.time.Clock()
+
+Clock = pygame.time.Clock()
 
 # 这个参数用来调整时间流逝的速率
 # game_speed=1时, 一来回需要3.6秒
@@ -54,6 +56,7 @@ def getdata(alog):
     d['player'][alog.side.side] = alog.side
     d['player'][alog.op_side.side] = alog.op_side
     d['cards'] = alog.card.cards
+
     return d
 
 
@@ -129,6 +132,25 @@ def writeinfo(screen, player, font):
     screen.blit(font.render(str(int(player['West'].life)), True, (0, 0, 0)), (table[0][0] - 24, table[0][1] - 100))
     screen.blit(font.render(str(int(player['East'].life)), True, (0, 0, 0)), (table[1][0] - 80, table[1][1] - 100))
 
+#写血量改变
+def writeChange(screen, player, font):
+    screen.blit(font.render("bat:" + str(int(player['West'].bat_lf)), True, (0, 0, 0)),
+                (table[0][0] - 244, table[0][1]))
+    screen.blit(font.render("acc:" + str(int(player['West'].acc_lf)), True, (0, 0, 0)),
+                (table[0][0] - 244, table[0][1] + 25))
+    screen.blit(font.render("run:" + str(int(player['West'].run_lf)), True, (0, 0, 0)),
+                (table[0][0] - 244, table[0][1] + 50))
+    screen.blit(font.render("card:" + str(int(player['West'].card_lf)), True, (0, 0, 0)),
+                (table[0][0] - 244, table[0][1] + 75))
+    screen.blit(font.render("bat:" + str(int(player['East'].bat_lf)), True, (0, 0, 0)),
+                (table[1][0] + 180, table[1][1]))
+    screen.blit(font.render("acc:" + str(int(player['East'].acc_lf)), True, (0, 0, 0)),
+                (table[1][0] + 180, table[1][1] + 25))
+    screen.blit(font.render("run:" + str(int(player['East'].run_lf)), True, (0, 0, 0)),
+                (table[1][0] + 180, table[1][1] + 50))
+    screen.blit(font.render("card:" + str(int(player['East'].card_lf)), True, (0, 0, 0)),
+                (table[1][0] + 180, table[1][1] + 75))
+
 
 # 画道具
 def draw_card(screen, cards, font):
@@ -138,19 +160,21 @@ def draw_card(screen, cards, font):
         x -= image.get_width() / 2
         y -= image.get_height() / 2
         screen.blit(image, (x, y))
-        
-#画道具箱
+
+
+# 画道具箱
 def draw_card_box(screen, player):
     i = 0
     for card in player['West'].card_box:
-        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
-        screen.blit(image, (150-image.get_width()/2, 170+i))
-        i+=image.get_height()+10
+        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
+        screen.blit(image, (150 - image.get_width() / 2, 170 + i))
+        i += image.get_height() + 10
     i = 0
     for card in player['East'].card_box:
-        image = pygame.image.load('%s.png'%card.code.lower()).convert_alpha()
-        screen.blit(image, (s_size[0]-150-image.get_width()/2, 170+i))
-        i+=image.get_height()+10
+        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
+        screen.blit(image, (s_size[0] - 150 - image.get_width() / 2, 170 + i))
+        i += image.get_height() + 10
+
 
 def main():
     # 判断有无命令行参数
@@ -183,7 +207,7 @@ def main():
             for i in range(len(namelist)):
                 print('第', i, '个', namelist[i])
             ssssss = int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' % (len(namelist) - 1)))  # 序号
-            
+
             logname = namelist[ssssss]
             break
         except ValueError as e:
@@ -191,20 +215,21 @@ def main():
             print('请输入合法数字！')
         except IndexError as e:
             # 列表越界
-            print('请输入范围内的数字（0-%d）'%(len(namelist)-1))
+            print('请输入范围内的数字（0-%d）' % (len(namelist) - 1))
         except NameError as e:
             print('没有测试文件！')
             input('请输入回车键退出程序')
             exit()
-            
+
     # 读出log, winner, reason
     log, winner, reason = readlog(logname)
     over = False
-    
+
     # pygame初始化
     pygame.init()
     screen = pygame.display.set_mode(s_size)
     font = pygame.font.SysFont("arial", 32)
+    small_font = pygame.font.SysFont("arial", 16)
     clock = pygame.time.Clock()
 
     # 读取两轮数据
@@ -213,19 +238,19 @@ def main():
     ball_pos = d_current['ball_pos']
     ball_v = d_current['ball_v']
     tick = d_current['tick']
-    
+
     next_tick = 0
-    
-    if len(log)>1:
+
+    if len(log) > 1:
         d_next = getdata(log.pop(0))
         next_tick = d_next['tick']
     else:
         over = True
 
     clock.tick()
-    
+
     while True:
-        Clock.tick(100)#限制FPS
+        Clock.tick(100)  # 限制FPS
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
@@ -236,7 +261,7 @@ def main():
         draw_card(screen, d_current['cards'], font)
         draw_card_box(screen, player)
         draw_all(screen, ball_pos, player['West'], player['East'])
-
+        writeChange(screen, player, small_font)
         t_passed = clock.tick() * game_speed
 
         # 最后一次记录之后再走半回合

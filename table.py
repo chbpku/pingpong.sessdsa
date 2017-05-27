@@ -428,7 +428,7 @@ class Table:  # 球桌
             'cards': copy.copy(player.card_box)}
         dict_op_side = {
             'name': op_player.name,
-            'position': None if self.active_card[1] == CARD_DSPR else copy.copy(op_player.pos),
+            'position': copy.copy(op_player.pos),
             'life': op_player.life,
             'cards': copy.copy(op_player.card_box),
             'active_card': self.active_card,

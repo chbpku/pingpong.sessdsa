@@ -89,7 +89,7 @@ with open("[E.M]T_Unicorn-VS-T_idiot.txt",'w') as output:  # 根据输出文件�
         output.write(str(entry.op_side.action.run))
         output.write("\n")
         output.write("  card_box:")
-        output.write(str(entry.side.card_box))
+        output.write(str(entry.op_side.card_box))
         output.write("\n")
 
         output.write("ball:")

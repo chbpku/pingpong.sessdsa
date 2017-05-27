@@ -329,9 +329,10 @@ class BallData:  # 球的信息，记录日志用
 
 
 class CardData:  # 道具信息，记录日志用
-    def __init__(self, card_tick, cards):
+    def __init__(self, card_tick, cards, active_card):
         self.card_tick = card_tick
         self.cards = copy.copy(cards)  # 道具对象的列表，数量上限为MAX_TABLE_CARDS
+        self.active_card = active_card # (<被用道具方West/East>, <道具代码>)
 
 
 class Table:  # 球桌
@@ -404,6 +405,7 @@ class Table:  # 球桌
         self.deploy_card()
 
         # 让跑位方的道具生效
+        # active_card=(<被用道具方West/East>, <道具代码>)
         self.active_card = op_player.action.card
         player.card_lf = 0
         op_player.card_lf = 0

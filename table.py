@@ -21,7 +21,7 @@ PL = {'West': 'W', 'East': 'E'}
 # 游戏结束原因代码
 RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T'}
 # 道具出现频率每多少ticks出现一个道具
-CARD_FREQ = 4000
+CARD_FREQ = 3600 * 2.5
 # 道具出现的空间范围
 CARD_EXTENT = (-800000, 800000, 100000, 900000)
 # 道具箱的最大容量
@@ -248,7 +248,7 @@ class Racket:  # 球拍
     def __init__(self, side, pos):  # 选边'West'／'East'和位置
         self.side, self.pos = side, pos
         self.life = RACKET_LIFE
-        self.bat_lf = self.run_lf = self.acc_lf = self.card_lf = 0  #各种操作对生命值的损耗
+        self.bat_lf = self.run_lf = self.acc_lf = self.card_lf = 0  # 各种操作对生命值的损耗
         self.name = self.serve = self.play = self.summarize = None
         self.action = self.datastore = None
         self.card_box = CardBox()  # 道具箱，本方拥有的道具，不超过MAX_CARDS个，超过的话按照队列形式删除旧的道具。
@@ -332,7 +332,7 @@ class CardData:  # 道具信息，记录日志用
     def __init__(self, card_tick, cards, active_card):
         self.card_tick = card_tick
         self.cards = copy.copy(cards)  # 道具对象的列表，数量上限为MAX_TABLE_CARDS
-        self.active_card = active_card # (<被用道具方West/East>, <道具代码>)
+        self.active_card = active_card  # (<被用道具方West/East>, <道具代码>)
 
 
 class Table:  # 球桌

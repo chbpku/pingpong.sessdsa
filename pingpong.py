@@ -69,7 +69,8 @@ def race(west_name, west_serve, west_play, west_summarize,
     print("tickstep:" + str(main_table.tick_step))
     print("Westlife:" + str(main_table.players['West'].life))
     print("Eastlife:" + str(main_table.players['East'].life))
-
+    print('West_used_card'+str(main_table.players['West'].usedcard))
+    print('East_used_card'+str(main_table.players['East'].usedcard))
     # 终局打印信息输出
     print("%s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d tick" %
           (main_table.winner, main_table.reason,

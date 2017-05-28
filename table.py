@@ -232,7 +232,7 @@ class Ball:  # 球
 
 
 class RacketAction:  # 球拍动作
-    def __init__(self, tick, bat_vector, acc_vector, run_vector, side, card):
+    def __init__(self, tick, bat_vector, acc_vector, run_vector, side: str, card: Card):
         # self.t0 = tick  # tick时刻的动作，都是一维矢量，仅在y轴方向
         self.bat = bat_vector  # t0~t1迎球的动作矢量（移动方向及距离）
         self.acc = acc_vector  # t1触球加速矢量（加速的方向及速度）

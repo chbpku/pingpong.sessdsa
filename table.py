@@ -332,7 +332,7 @@ class CardData:  # 道具信息，记录日志用
     def __init__(self, card_tick, cards, active_card):
         self.card_tick = card_tick  # 道具出现时间的计时，0-CARD_FREQ
         self.cards = copy.copy(cards)  # 道具对象的列表，数量上限为MAX_TABLE_CARDS
-        self.active_card = active_card  # (<被用道具方West/East>, <道具代码>)
+        self.active_card = active_card  # (<被用道具方SELF/OPNT>, <Card>)
 
 
 class Table:  # 球桌

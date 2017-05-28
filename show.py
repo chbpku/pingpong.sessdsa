@@ -171,12 +171,12 @@ def draw_card(screen, cards, font):
 def draw_card_box(screen, player):
     i = 0
     for card in player['West'].card_box:
-        image = pygame.image.load('%s.png' % card.code.lower())#.convert_alpha()
+        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
         screen.blit(image, (150 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
     i = 0
     for card in player['East'].card_box:
-        image = pygame.image.load('%s.png' % card.code.lower())#.convert_alpha()
+        image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
         screen.blit(image, (s_size[0] - 150 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
 
@@ -186,12 +186,12 @@ def draw_card_history(screen, player_card_history):
     # TODO 跟draw_card_box类似，需要一个新的坐标容纳各自的使用道具历史
     i = 0
     for card in player_card_history['West']:
-        image = pygame.image.load('%s.png' % card[1].lower())#.convert_alpha()
+        image = pygame.image.load('%s.png' % card[1].code.lower()).convert_alpha()
         screen.blit(image, (200 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
     i = 0
     for card in player_card_history['East']:
-        image = pygame.image.load('%s.png' % card[1].lower())#.convert_alpha()
+        image = pygame.image.load('%s.png' % card[1].code.lower()).convert_alpha()
         screen.blit(image, (s_size[0] - 200 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
     return
@@ -263,6 +263,7 @@ def main():
     ball_v = d_current['ball_v']
     tick = d_current['tick']
     # 给使用道具一方(跑位方)加上当前道具
+    card_tick = d_current['card_tick']
     if d_current['active_card'][0] is not None:
         player_card_history[d_current['op_side']].append(d_current['active_card'])
 
@@ -302,7 +303,8 @@ def main():
 
         # 时间流逝和球的移动
         tick += t_passed
-        screen.blit(font.render("tick: %s" % tick, True, (0, 0, 0)), (20, 20))
+        card_tick += t_passed
+        screen.blit(font.render("tick: %s cardtick:%s" % (tick, card_tick), True, (0, 0, 0)), (20, 20))
         ball_pos.x += ball_v.x * t_passed
         ball_pos.y += ball_v.y * t_passed
 
@@ -322,6 +324,7 @@ def main():
                 over = True
 
             # 给使用道具一方(跑位方)加上当前道具
+            card_tick = d_current['card_tick']
             if d_current['active_card'][0] is not None:
                 player_card_history[d_current['op_side']].append(d_current['active_card'])
 

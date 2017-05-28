@@ -211,7 +211,7 @@ def main():
         r = re.compile(r'^\[[EW]\.[A-Z]\]T_[^-]+-VS-T_[^.]+\.(dat|db)$')
         # 首先保证是文件而不是目录，且不为空
         namelist = []  # 用来保存所有对战名称
-        print('请注意，本代码不支持未找到的报错，希望有人能改正\n')
+
         for name in filter(lambda f: os.path.isfile(f) and os.path.getsize(f) != 0, file_list):
             m = r.match(name)
             if m is not None:
@@ -299,6 +299,14 @@ def main():
             screen.blit(font.render(reason, True, (0, 0, 0)), (center[0] - 50, center[1] - 220))
             screen.blit(font.render("%s win!" % player[winner].name, True, (0, 0, 0)),
                         (center[0] - 60, center[1] - 270))
+            image = pygame.image.load('win.png').convert_alpha()
+
+            if winner=='East':
+                screen.blit(image, (table[1][0] + 100 - 20-40, table[1][1] - 50-20))#(table[0][0] - 24 - 100 - 20, table[0][1] - 50)
+            elif winner=='West':
+                screen.blit(image,(table[0][0] - 24 - 100 - 20-40, table[0][1] - 50-20))#(table[1][0] + 100 - 20, table[1][1] - 50)
+
+            
             t_passed = 0
 
         # 时间流逝和球的移动

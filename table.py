@@ -330,7 +330,7 @@ class BallData:  # 球的信息，记录日志用
 
 class CardData:  # 道具信息，记录日志用
     def __init__(self, card_tick, cards, active_card):
-        self.card_tick = card_tick
+        self.card_tick = card_tick  # 道具出现时间的计时，0-CARD_FREQ
         self.cards = copy.copy(cards)  # 道具对象的列表，数量上限为MAX_TABLE_CARDS
         self.active_card = active_card  # (<被用道具方West/East>, <道具代码>)
 
@@ -506,8 +506,8 @@ class Table:  # 球桌
 
 class LogEntry:
     def __init__(self, tick, side, op_side, ball, card):
-        self.tick = tick
-        self.side = side
-        self.op_side = op_side
-        self.ball = ball
-        self.card = card
+        self.tick = tick  # 当前的时间
+        self.side = side  # RacketData类对象
+        self.op_side = op_side  # RacketData类对象
+        self.ball = ball  # BallData类对象
+        self.card = card  # CardData类对象

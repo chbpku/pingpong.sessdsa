@@ -1,8 +1,10 @@
 from table import Table, LogEntry, RacketData, BallData, CardData, DIM, TMAX, PL, RS
+from table import ROUND_NUMBER
 import shelve
 
 
-def race(west_name, west_serve, west_play, west_summarize,
+def race(round_count,
+         west_name, west_serve, west_play, west_summarize,
          east_name, east_serve, east_play, east_summarize):
     # 生成球桌
     main_table = Table()
@@ -52,9 +54,10 @@ def race(west_name, west_serve, west_play, west_summarize,
         d.close()
 
     # 终局，保存复盘资料，文件名称记录了胜负及原因，对战双方名称，和选边
-    d = shelve.open('[%s.%s]%s-VS-%s' % (PL[main_table.winner],
-                                         RS[main_table.reason],
-                                         west_name, east_name,))
+    d = shelve.open('[%s.%s]%s-VS-%s-%03d' % (PL[main_table.winner],
+                                              RS[main_table.reason],
+                                              west_name, east_name,
+                                              round_count))
     d['DIM'] = DIM
     d['TMAX'] = TMAX
     d['tick_step'] = main_table.tick_step
@@ -65,14 +68,14 @@ def race(west_name, west_serve, west_play, west_summarize,
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
-    print("tick:" + str(main_table.tick))
-    print("tickstep:" + str(main_table.tick_step))
-    print("Westlife:" + str(main_table.players['West'].life))
-    print("Eastlife:" + str(main_table.players['East'].life))
+    # print("tick:" + str(main_table.tick))
+    # print("tickstep:" + str(main_table.tick_step))
+    # print("Westlife:" + str(main_table.players['West'].life))
+    # print("Eastlife:" + str(main_table.players['East'].life))
 
     # 终局打印信息输出
-    print("%s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d tick" %
-          (main_table.winner, main_table.reason,
+    print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks" %
+          (round_count, main_table.winner, main_table.reason,
            west_name, main_table.players['West'].life,
            east_name, main_table.players['East'].life, main_table.tick))
 
@@ -84,8 +87,8 @@ players = [f[:-3] for f in os.listdir('.') if os.path.isfile(f) and f[-3:] == '.
 i = 0
 for west_name in players:
     for east_name in players:
-        print('----------------------''第', i, '局''-------------------------')
+        print('----------------------%s vs %s-------------------------' % (west_name, east_name))
         exec('import %s as WP' % (west_name,))
         exec('import %s as EP' % (east_name,))
-        race(west_name, WP.serve, WP.play, WP.summarize, east_name, EP.serve, EP.play, EP.summarize)
-        i = i + 1
+        for i in range(ROUND_NUMBER):
+            race(i, west_name, WP.serve, WP.play, WP.summarize, east_name, EP.serve, EP.play, EP.summarize)

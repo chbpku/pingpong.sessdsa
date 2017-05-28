@@ -2,6 +2,8 @@ import copy
 import random
 import math
 
+# 每次组合打多少局
+ROUND_NUMBER = 5
 # 桌面的坐标系，单位"pace"
 DIM = (-900000, 900000, 0, 1000000)
 # 最大时间，单位"tick"，每个回合3600tick，200回合

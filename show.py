@@ -327,6 +327,8 @@ def main():
             card_tick = d_current['card_tick']
             if d_current['active_card'][0] is not None:
                 player_card_history[d_current['op_side']].append(d_current['active_card'])
+                while len(player_card_history[d_current['op_side']])> 7:
+                    player_card_history[d_current['op_side']].pop(0)
 
         # 碰到上下墙壁时进行反弹
         if ball_pos.y >= DIM[3]:

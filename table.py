@@ -21,7 +21,7 @@ PL = {'West': 'W', 'East': 'E'}
 # 游戏结束原因代码
 RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T'}
 # 道具出现频率每多少ticks出现一个道具
-CARD_FREQ = 3600 * 2.5
+CARD_FREQ = int(3600 * 2.5)
 # 道具出现的空间范围
 CARD_EXTENT = (-800000, 800000, 100000, 900000)
 # 道具箱的最大容量

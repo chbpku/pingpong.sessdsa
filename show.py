@@ -265,7 +265,7 @@ def main():
     # 给使用道具一方(跑位方)加上当前道具
     card_tick = d_current['card_tick']
     if d_current['active_card'][0] is not None:
-        player_card_history[d_current['op_side']].append(d_current['active_card'])
+        player_card_history[d_current['side']].append(d_current['active_card'])
 
     next_tick = 0
 
@@ -334,9 +334,9 @@ def main():
             # 给使用道具一方(跑位方)加上当前道具
             card_tick = d_current['card_tick']
             if d_current['active_card'][0] is not None:
-                player_card_history[d_current['op_side']].append(d_current['active_card'])
-                while len(player_card_history[d_current['op_side']])> 7:
-                    player_card_history[d_current['op_side']].pop(0)
+                player_card_history[d_current['side']].append(d_current['active_card'])
+                while len(player_card_history[d_current['side']])> 7:
+                    player_card_history[d_current['side']].pop(0)
 
         # 碰到上下墙壁时进行反弹
         if ball_pos.y >= DIM[3]:

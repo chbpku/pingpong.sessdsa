@@ -250,7 +250,7 @@ def main():
     d_current = getdata(log.pop(0))
     player = d_current['player']
     ball_pos = copy.copy(d_current['ball_pos'])
-    ball_v = d_current['ball_v']
+    ball_v = copy.copy(d_current['ball_v'])
     tick = d_current['tick']
     # 给使用道具一方(跑位方)加上当前道具
     card_tick = d_current['card_tick']
@@ -285,7 +285,7 @@ def main():
                     d_current = getdata(log.pop(0))
                     player = d_current['player']
                     ball_pos = copy.copy(d_current['ball_pos'])
-                    ball_v = d_current['ball_v']
+                    ball_v = copy.copy(d_current['ball_v'])
                     tick = d_current['tick']
                     # 给使用道具一方(跑位方)加上当前道具
                     card_tick = d_current['card_tick']
@@ -336,7 +336,7 @@ def main():
             d_current = d_next
             player = d_current['player']
             ball_pos = copy.copy(d_current['ball_pos'])
-            ball_v = d_current['ball_v']
+            ball_v = copy.copy(d_current['ball_v'])
             tick = d_current['tick']
 
             # 判断是否为最后一次记录

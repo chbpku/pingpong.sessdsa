@@ -19,6 +19,7 @@ from table import *
 # 这个参数用来调整时间流逝的速率
 # game_speed=1时, 一来回需要3.6秒
 game_speed = 1
+pause_speed = 0
 # 各种参数
 x, y = 18, 10
 s_size = (1024, 600)
@@ -39,8 +40,9 @@ def readlog(logname):
     log = d['log']
     winner = d['winner']
     reason = d['reason']
+    tick_total = d['tick_total']
     d.close()
-    return log, winner, reason
+    return log, winner, reason, tick_total
 
 # 把log类转换成字典
 def getdata(alog):
@@ -182,6 +184,9 @@ def draw_card_history(screen, player_card_history):
     return
 
 def main():
+    global game_speed
+    global pause_speed
+
     # 判断有无命令行参数
     if len(sys.argv) == 2:
         logname = sys.argv[1]
@@ -212,7 +217,6 @@ def main():
             for i in range(len(namelist)):
                 print('第', i, '个', namelist[i])
             ssssss = int(input('请输入你想看的对战的序号，从0开始，到%d结束\n' % (len(namelist) - 1)))  # 序号
-
             logname = namelist[ssssss]
             break
         except ValueError as e:
@@ -227,8 +231,10 @@ def main():
             exit()
 
     # 读出log, winner, reason
-    log, winner, reason = readlog(logname)
+    log, winner, reason, tick_total = readlog(logname)
+    backup = copy.copy(log)
     over = False
+
 
     # pygame初始化
     pygame.init()
@@ -267,6 +273,30 @@ def main():
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
+            if event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    game_speed, pause_speed = pause_speed, game_speed
+                if event.key in range(K_1, K_9+1):
+                    t = event.key - K_1
+                    # 读取两轮数据
+                    log = copy.copy(backup)
+                    for i in range(len(log)//10*t):
+                        log.pop(0)
+                    d_current = getdata(log.pop(0))
+                    player = d_current['player']
+                    ball_pos = copy.copy(d_current['ball_pos'])
+                    ball_v = d_current['ball_v']
+                    tick = d_current['tick']
+                    # 给使用道具一方(跑位方)加上当前道具
+                    card_tick = d_current['card_tick']
+                    if d_current['active_card'][0] is not None:
+                        player_card_history[d_current['side']].append(d_current['active_card'])
+                    next_tick = 0
+                    if len(log) > 1:
+                        d_next = getdata(log.pop(0))
+                        next_tick = d_next['tick']
+                    else:
+                        over = True
 
         # 画画
         screen.fill((255, 255, 255))
@@ -296,7 +326,8 @@ def main():
         # 时间流逝和球的移动
         tick += t_passed
         card_tick += t_passed
-        screen.blit(font.render("tick: %s cardtick:%s" % (tick, card_tick), True, (0, 0, 0)), (20, 20))
+        screen.blit(font.render("tick: %s" % (tick,), True, (0, 0, 0)), (20, 20))
+        screen.blit(font.render("cardtick:%s" % (card_tick,), True, (0, 0, 0)), (200, 20))
         ball_pos.x += ball_v.x * t_passed
         ball_pos.y += ball_v.y * t_passed
 
@@ -304,7 +335,7 @@ def main():
         if not over and tick >= next_tick:
             d_current = d_next
             player = d_current['player']
-            ball_pos = d_current['ball_pos']
+            ball_pos = copy.copy(d_current['ball_pos'])
             ball_v = d_current['ball_v']
             tick = d_current['tick']
 

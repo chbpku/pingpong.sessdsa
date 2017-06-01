@@ -292,6 +292,7 @@ def main():
                     if d_current['active_card'][0] is not None:
                         player_card_history[d_current['side']].append(d_current['active_card'])
                     next_tick = 0
+                    over = False
                     if len(log) > 1:
                         d_next = getdata(log.pop(0))
                         next_tick = d_next['tick']

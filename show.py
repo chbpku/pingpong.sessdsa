@@ -10,13 +10,11 @@
 
 # 不要在意里面的各种神秘数字
 
-from table import *
+
+import shelve, time, sys, copy
 import pygame
 from pygame.locals import *
-import shelve, time
-import sys
-
-Clock = pygame.time.Clock()
+from table import *
 
 # 这个参数用来调整时间流逝的速率
 # game_speed=1时, 一来回需要3.6秒
@@ -35,7 +33,6 @@ table = (
     (center[0] + x / 2 * n, center[1] + y / 2 * n),
     (center[0] - x / 2 * n, center[1] + y / 2 * n),)
 
-
 # 读取文件, 返回文件中的log类, 胜利者, 和胜利原因
 def readlog(logname):
     d = shelve.open(logname)
@@ -44,7 +41,6 @@ def readlog(logname):
     reason = d['reason']
     d.close()
     return log, winner, reason
-
 
 # 把log类转换成字典
 def getdata(alog):
@@ -60,16 +56,13 @@ def getdata(alog):
     d['active_card'] = alog.card.active_card  # 当前使用的道具（'SELF'/'OPNT', card_code），'SELF'指跑位方
     d['side'] = alog.side.side  # 迎球方
     d['op_side'] = alog.op_side.side  # 跑位方
-
     return d
-
 
 # 把球桌坐标转换成pygame屏幕的坐标
 def pos_trans(oldpos):
     pos_x = int((0.0 + oldpos.x / (DIM[1] - DIM[0])) * n * x + center[0])
     pos_y = int((0.5 - oldpos.y / (DIM[3] - DIM[2])) * n * y + center[1])
     return (pos_x, pos_y)
-
 
 # 画球桌
 def draw_table(screen):
@@ -86,12 +79,10 @@ def draw_table(screen):
     pygame.draw.polygon(screen, (0, 255, 0), polygon_1, 0)
     pygame.draw.polygon(screen, (0, 255, 0), polygon_2, 0)
 
-
 # 画球
 def draw_ball(screen, ball_pos):
     pos = pos_trans(ball_pos)
     pygame.draw.circle(screen, (0, 0, 0), pos, 8, 0)
-
 
 # 画球拍
 def draw_player(screen, player):
@@ -118,14 +109,12 @@ def draw_player(screen, player):
     pos = pos_trans(player.pos)
     pygame.draw.polygon(screen, color, poslist, 0)
 
-
 # 画
 def draw_all(screen, ball_pos, player_1, player_2):
     draw_table(screen)
     draw_ball(screen, ball_pos)
     draw_player(screen, player_1)
     draw_player(screen, player_2)
-
 
 # 写信息
 def writeinfo(screen, player, font):
@@ -135,7 +124,6 @@ def writeinfo(screen, player, font):
     screen.blit(font.render(player['East'].name, True, (0, 0, 0)), (table[1][0] + 100 - 20, table[1][1] - 50))
     screen.blit(font.render(str(int(player['West'].life)), True, (0, 0, 0)), (table[0][0] - 24, table[0][1] - 100))
     screen.blit(font.render(str(int(player['East'].life)), True, (0, 0, 0)), (table[1][0] - 80, table[1][1] - 100))
-
 
 # 写血量改变
 def writeChange(screen, player, font):
@@ -156,7 +144,6 @@ def writeChange(screen, player, font):
     screen.blit(font.render("card:" + str(int(player['East'].card_lf)), True, (0, 0, 0)),
                 (table[1][0] + 180, table[1][1] + 75))
 
-
 # 画道具
 def draw_card(screen, cards, font):
     for card in cards:
@@ -165,7 +152,6 @@ def draw_card(screen, cards, font):
         x -= image.get_width() / 2
         y -= image.get_height() / 2
         screen.blit(image, (x, y))
-
 
 # 画道具箱
 def draw_card_box(screen, player):
@@ -179,7 +165,6 @@ def draw_card_box(screen, player):
         image = pygame.image.load('%s.png' % card.code.lower()).convert_alpha()
         screen.blit(image, (s_size[0] - 150 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
-
 
 # 画道具使用历史
 def draw_card_history(screen, player_card_history):
@@ -195,7 +180,6 @@ def draw_card_history(screen, player_card_history):
         screen.blit(image, (s_size[0] - 200 - image.get_width() / 2, 170 + i))
         i += image.get_height() + 10
     return
-
 
 def main():
     # 判断有无命令行参数
@@ -259,7 +243,7 @@ def main():
     # 读取两轮数据
     d_current = getdata(log.pop(0))
     player = d_current['player']
-    ball_pos = d_current['ball_pos']
+    ball_pos = copy.copy(d_current['ball_pos'])
     ball_v = d_current['ball_v']
     tick = d_current['tick']
     # 给使用道具一方(跑位方)加上当前道具
@@ -275,10 +259,11 @@ def main():
     else:
         over = True
 
-    clock.tick()
+    clock.tick()  
 
     while True:
-        Clock.tick(100)  # 限制FPS
+        t_passed = clock.tick(100) * game_speed  # 限制FPS
+        
         for event in pygame.event.get():
             if event.type == QUIT:
                 exit()
@@ -291,8 +276,7 @@ def main():
         draw_card_history(screen, player_card_history)
         draw_all(screen, ball_pos, player['West'], player['East'])
         writeChange(screen, player, small_font)
-        t_passed = clock.tick() * game_speed
-
+        
         # 最后一次记录之后再走半回合
         if over and tick >= next_tick + 1800:
             tick = next_tick + 1800

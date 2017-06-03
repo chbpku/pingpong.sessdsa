@@ -24,7 +24,8 @@ FACTOR_SPEED = 20
 # 游戏方代码
 PL = {'West': 'W', 'East': 'E'}
 # 游戏结束原因代码
-RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T'}
+RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T',
+      'clock_out': 'K', 'run_error': 'E'}
 # 道具出现频率每多少ticks出现一个道具
 CARD_FREQ = int(3600 * 2.5)
 # 道具出现的空间范围

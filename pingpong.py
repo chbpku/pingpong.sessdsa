@@ -65,6 +65,7 @@ def race(round_count,
     d['East'] = east_name
     d['tick_total'] = main_table.tick
     d['winner'] = main_table.winner
+    d['winner_life'] = main_table.players[main_table.winner].life
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()

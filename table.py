@@ -56,6 +56,7 @@ def print_none(*args, **kwargs):
     return
 
 
+my_print = print
 print = print_none
 
 

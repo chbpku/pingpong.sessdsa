@@ -1,5 +1,5 @@
 from table import Table, LogEntry, RacketData, BallData, CardData, DIM, TMAX, PL, RS
-from table import ROUND_NUMBER, print_none
+from table import ROUND_NUMBER, print_none, my_print
 import shelve
 
 
@@ -78,9 +78,6 @@ def race(round_count,
 
 
 import os
-
-my_print = print
-print = print_none
 
 # 取得所有以T_开始文件名的算法文件名
 players = [f[:-3] for f in os.listdir('.') if os.path.isfile(f) and f[-3:] == '.py' and f[:2] == 'T_']

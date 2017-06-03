@@ -12,6 +12,14 @@ import time
 TITLE = 'Results by team'
 
 
+def print_none(*args, **kwargs):
+    pass
+    return
+
+
+print = print_none
+
+
 def readlog(logname):
     d = shelve.open(logname)
     log = d['log']

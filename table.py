@@ -57,7 +57,9 @@ def print_none(*args, **kwargs):
 
 
 my_print = print
-print = print_none
+
+
+# print = print_none
 
 
 def sign(n):  # 返回n的符号，小于0为-1，否则为1
@@ -130,6 +132,11 @@ class Ball:  # 球
     def __init__(self, extent, pos, velocity):
         # 球所在的坐标系参数extent，球的位置坐标pos，球的运动速度矢量velocity
         self.extent, self.pos, self.velocity = extent, pos, velocity
+
+    def __str__(self):
+        return 'BALL(ext=%s,pos=%s,vel=%s)' % (self.extent, self.pos, self.velocity)
+
+    __repr__ = __str__
 
     def bounce_wall(self):  # 球在墙壁上反弹
         self.velocity.y = -self.velocity.y
@@ -431,6 +438,7 @@ class Table:  # 球桌
             self.finished = True
             self.winner = self.side
             self.reason = "invalid_bounce"
+            print(count_bounce, player.pos, op_player.pos, self.ball)
             return
         # 将击中的道具加入道具箱
         for card in hit_cards:
@@ -483,6 +491,7 @@ class Table:  # 球桌
             player_action = player.play(TableData(self.tick, self.tick_step,
                                                   dict_side, dict_op_side, dict_ball, dict_card),
                                         player.datastore)
+            player_action.normalize()
             self.clock_end = time.clock()
             player.clock_time += self.clock_end - self.clock_start
         except:  # 调用迎球出错
@@ -498,7 +507,6 @@ class Table:  # 球桌
 
         # 设置迎球方的动作，迎球方使用的道具生效要到下一趟
         # 将迎球方动作中的距离速度等值规整化为整数
-        player_action.normalize()
         player.set_action(player_action)
 
         # 执行迎球方的两个动作：迎球和加速

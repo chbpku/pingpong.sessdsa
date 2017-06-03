@@ -3,6 +3,11 @@ from table import ROUND_NUMBER
 import shelve
 
 
+def print_none(*args, **kwargs):
+    pass
+    return
+
+
 def race(round_count,
          west_name, west_serve, west_play, west_summarize,
          east_name, east_serve, east_play, east_summarize):
@@ -69,19 +74,18 @@ def race(round_count,
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
-    # print("tick:" + str(main_table.tick))
-    # print("tickstep:" + str(main_table.tick_step))
-    # print("Westlife:" + str(main_table.players['West'].life))
-    # print("Eastlife:" + str(main_table.players['East'].life))
 
     # 终局打印信息输出
-    print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks" %
-          (round_count, main_table.winner, main_table.reason,
-           west_name, main_table.players['West'].life,
-           east_name, main_table.players['East'].life, main_table.tick))
+    my_print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks" %
+             (round_count, main_table.winner, main_table.reason,
+              west_name, main_table.players['West'].life,
+              east_name, main_table.players['East'].life, main_table.tick))
 
 
 import os
+
+my_print = print
+print = print_none
 
 # 取得所有以T_开始文件名的算法文件名
 players = [f[:-3] for f in os.listdir('.') if os.path.isfile(f) and f[-3:] == '.py' and f[:2] == 'T_']
@@ -89,7 +93,7 @@ i = 0
 for west_name in players:
     for east_name in players:
         if west_name != east_name:
-            print('----------------------%s vs %s-------------------------' % (west_name, east_name))
+            my_print('----------------------%s vs %s-------------------------' % (west_name, east_name))
             exec('import %s as WP' % (west_name,))
             exec('import %s as EP' % (east_name,))
             for i in range(ROUND_NUMBER):

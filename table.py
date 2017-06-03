@@ -1,9 +1,12 @@
 import copy
 import random
 import math
+import time
 
 # 每次组合打多少局
 ROUND_NUMBER = 5
+# 每局的物理时限（单方）
+ROUND_CLOCK = 30.0
 # 桌面的坐标系，单位"pace"
 DIM = (-900000, 900000, 0, 1000000)
 # 最大时间，单位"tick"，每个回合3600tick，200回合
@@ -21,7 +24,8 @@ FACTOR_SPEED = 20
 # 游戏方代码
 PL = {'West': 'W', 'East': 'E'}
 # 游戏结束原因代码
-RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T'}
+RS = {'invalid_bounce': 'B', 'miss_ball': 'M', 'life_out': 'L', 'time_out': 'T',
+      'clock_out': 'K', 'run_error': 'E'}
 # 道具出现频率每多少ticks出现一个道具
 CARD_FREQ = int(3600 * 2.5)
 # 道具出现的空间范围
@@ -45,6 +49,15 @@ CARD_AMPL = 'AM'  # 变压器：放大被用道具方的体力值损失；param=
 CARD_AMPL_PARAM = 2
 ALL_CARDS = [(CARD_SPIN, CARD_SPIN_PARAM), (CARD_DSPR, CARD_DSPR_PARAM), (CARD_INCL, CARD_INCL_PARAM),
              (CARD_DECL, CARD_DECL_PARAM), (CARD_TLPT, CARD_TLPT_PARAM), (CARD_AMPL, CARD_AMPL_PARAM)]
+
+
+def print_none(*args, **kwargs):
+    pass
+    return
+
+
+my_print = print
+print = print_none
 
 
 def sign(n):  # 返回n的符号，小于0为-1，否则为1
@@ -253,6 +266,7 @@ class Racket:  # 球拍
         self.bat_lf = self.run_lf = self.acc_lf = self.card_lf = 0  # 各种操作对生命值的损耗
         self.name = self.serve = self.play = self.summarize = None
         self.action = self.datastore = None
+        self.clock_time = 0.0
         self.card_box = CardBox()  # 道具箱，本方拥有的道具，不超过MAX_CARDS个，超过的话按照队列形式删除旧的道具。
 
     def bind_play(self, name, serve, play, summarize):  # 绑定玩家名称和serve, play, summarize函数
@@ -343,6 +357,9 @@ class Table:  # 球桌
         self.xmin, self.xmax, self.ymin, self.ymax = DIM
         self.tick = 0
         self.ball = None
+        self.clock_start = time.clock()  # 第一次调用
+        self.clock_end = time.clock()  # 第二次调用
+
         # tick增加的步长
         self.tick_step = (self.xmax - self.xmin) // BALL_V[0]  # 这是水平方向速度
         # 道具的计时器，以及球桌上散布的道具，当前被激活使用的道具
@@ -380,8 +397,22 @@ class Table:  # 球桌
     def serve(self):  # 发球，始终是West发球
         self.tick = 0  # 当前的时刻tick
         player = self.players[self.side]  # 现在side是West
-        pos_y, velocity_y = player.serve(self.players[self.op_side].name,
-                                         player.datastore)  # 只提供y方向的位置和速度
+        try:
+            self.clock_start = time.clock()
+            pos_y, velocity_y = player.serve(self.players[self.op_side].name,
+                                             player.datastore)  # 只提供y方向的位置和速度
+            self.clock_end = time.clock()
+            player.clock_time += self.clock_end - self.clock_start
+        except:  # 调用发球出错
+            self.finished = True
+            self.winner = self.op_side
+            self.reason = "run_error"
+            return
+        if player.clock_time > ROUND_CLOCK:
+            self.finished = True
+            self.winner = self.op_side
+            self.reason = "clock_out"
+            return
         pos_y, velocity_y = int(pos_y), int(velocity_y)
         self.ball = Ball(DIM, Position(BALL_POS[0], pos_y),
                          Vector(BALL_V[0], velocity_y))  # 球的初始化
@@ -447,9 +478,24 @@ class Table:  # 球桌
             'card_tick': self.card_tick,
             'cards': copy.copy(self.cards)}
         # 调用，返回迎球方的动作
-        player_action = player.play(TableData(self.tick, self.tick_step,
-                                              dict_side, dict_op_side, dict_ball, dict_card),
-                                    player.datastore)
+        try:
+            self.clock_start = time.clock()
+            player_action = player.play(TableData(self.tick, self.tick_step,
+                                                  dict_side, dict_op_side, dict_ball, dict_card),
+                                        player.datastore)
+            self.clock_end = time.clock()
+            player.clock_time += self.clock_end - self.clock_start
+        except:  # 调用迎球出错
+            self.finished = True
+            self.winner = self.op_side
+            self.reason = "run_error"
+            return
+        if player.clock_time > ROUND_CLOCK:
+            self.finished = True
+            self.winner = self.op_side
+            self.reason = "clock_out"
+            return
+
         # 设置迎球方的动作，迎球方使用的道具生效要到下一趟
         # 将迎球方动作中的距离速度等值规整化为整数
         player_action.normalize()

@@ -51,6 +51,14 @@ ALL_CARDS = [(CARD_SPIN, CARD_SPIN_PARAM), (CARD_DSPR, CARD_DSPR_PARAM), (CARD_I
              (CARD_DECL, CARD_DECL_PARAM), (CARD_TLPT, CARD_TLPT_PARAM), (CARD_AMPL, CARD_AMPL_PARAM)]
 
 
+def print_none(*args, **kwargs):
+    pass
+    return
+
+
+print = print_none
+
+
 def sign(n):  # 返回n的符号，小于0为-1，否则为1
     return -1 if n < 0 else 1
 

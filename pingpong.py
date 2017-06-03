@@ -1,11 +1,6 @@
 from table import Table, LogEntry, RacketData, BallData, CardData, DIM, TMAX, PL, RS
-from table import ROUND_NUMBER
+from table import ROUND_NUMBER, print_none
 import shelve
-
-
-def print_none(*args, **kwargs):
-    pass
-    return
 
 
 def race(round_count,

@@ -8,8 +8,8 @@ import shelve
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as grid
 import time
-
-TITLE = 'Results by team'
+import os 
+TITLE = os.getcwd().split('\\')[-1]
 
 
 def print_none(*args, **kwargs):

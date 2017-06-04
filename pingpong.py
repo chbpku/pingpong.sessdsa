@@ -71,7 +71,7 @@ def race(round_count,
     d.close()
 
     # 终局打印信息输出
-    my_print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks %ds:%ds" %
+    my_print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks %.3fs:%.3fs" %
              (round_count, main_table.winner, main_table.reason,
               west_name, main_table.players['West'].life,
               east_name, main_table.players['East'].life, main_table.tick,

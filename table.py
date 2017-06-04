@@ -57,7 +57,9 @@ def print_none(*args, **kwargs):
 
 
 my_print = print
-print = print_none
+
+
+# print = print_none
 
 
 def sign(n):  # 返回n的符号，小于0为-1，否则为1
@@ -130,6 +132,11 @@ class Ball:  # 球
     def __init__(self, extent, pos, velocity):
         # 球所在的坐标系参数extent，球的位置坐标pos，球的运动速度矢量velocity
         self.extent, self.pos, self.velocity = extent, pos, velocity
+
+    def __str__(self):
+        return 'BALL(ext=%s,pos=%s,vel=%s)' % (self.extent, self.pos, self.velocity)
+
+    __repr__ = __str__
 
     def bounce_wall(self):  # 球在墙壁上反弹
         self.velocity.y = -self.velocity.y
@@ -357,8 +364,8 @@ class Table:  # 球桌
         self.xmin, self.xmax, self.ymin, self.ymax = DIM
         self.tick = 0
         self.ball = None
-        self.clock_start = time.clock()  # 第一次调用
-        self.clock_end = time.clock()  # 第二次调用
+        self.clock_start = time.time()  # 第一次调用
+        self.clock_end = time.time()  # 第二次调用
 
         # tick增加的步长
         self.tick_step = (self.xmax - self.xmin) // BALL_V[0]  # 这是水平方向速度
@@ -398,10 +405,10 @@ class Table:  # 球桌
         self.tick = 0  # 当前的时刻tick
         player = self.players[self.side]  # 现在side是West
         try:
-            self.clock_start = time.clock()
+            self.clock_start = time.time()
             pos_y, velocity_y = player.serve(self.players[self.op_side].name,
                                              player.datastore)  # 只提供y方向的位置和速度
-            self.clock_end = time.clock()
+            self.clock_end = time.time()
             player.clock_time += self.clock_end - self.clock_start
         except:  # 调用发球出错
             self.finished = True
@@ -431,6 +438,7 @@ class Table:  # 球桌
             self.finished = True
             self.winner = self.side
             self.reason = "invalid_bounce"
+            print(count_bounce, player.pos, op_player.pos, self.ball)
             return
         # 将击中的道具加入道具箱
         for card in hit_cards:
@@ -460,11 +468,13 @@ class Table:  # 球桌
             'name': player.name,
             'position': copy.copy(player.pos),
             'life': player.life,
+            'clock': player.clock_time, # 花费的物理时间（秒）
             'cards': copy.copy(player.card_box)}
         dict_op_side = {
             'name': op_player.name,
             'position': copy.copy(op_player.pos),
             'life': op_player.life,
+            'clock': op_player.clock_time, # 花费的物理时间（秒）
             'cards': copy.copy(op_player.card_box),
             'active_card': self.active_card,
             'accelerate': None if self.active_card[1] == CARD_DSPR else
@@ -479,11 +489,12 @@ class Table:  # 球桌
             'cards': copy.copy(self.cards)}
         # 调用，返回迎球方的动作
         try:
-            self.clock_start = time.clock()
+            self.clock_start = time.time()
             player_action = player.play(TableData(self.tick, self.tick_step,
                                                   dict_side, dict_op_side, dict_ball, dict_card),
                                         player.datastore)
-            self.clock_end = time.clock()
+            player_action.normalize()
+            self.clock_end = time.time()
             player.clock_time += self.clock_end - self.clock_start
         except:  # 调用迎球出错
             self.finished = True
@@ -498,7 +509,6 @@ class Table:  # 球桌
 
         # 设置迎球方的动作，迎球方使用的道具生效要到下一趟
         # 将迎球方动作中的距离速度等值规整化为整数
-        player_action.normalize()
         player.set_action(player_action)
 
         # 执行迎球方的两个动作：迎球和加速

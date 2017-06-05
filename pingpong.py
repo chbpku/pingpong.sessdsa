@@ -54,10 +54,11 @@ def race(round_count,
         d.close()
 
     # 终局，保存复盘资料，文件名称记录了胜负及原因，对战双方名称，和选边
-    d = shelve.open('[%s.%s]%s-VS-%s-%03d' % (PL[main_table.winner],
+    shelve_name = '[%s.%s]%s-VS-%s-%03d' % (PL[main_table.winner],
                                               RS[main_table.reason],
                                               west_name, east_name,
-                                              round_count))
+                                              round_count)
+    d = shelve.open(shelve_name)
     d['DIM'] = DIM
     d['TMAX'] = TMAX
     d['tick_step'] = main_table.tick_step
@@ -69,6 +70,10 @@ def race(round_count,
     d['reason'] = main_table.reason
     d['log'] = log
     d.close()
+         
+    # 终局，生成一个bat文件，双击即可直接运行show.py，免除了找半天的痛苦
+    with open(shelve_name + '.bat', 'w') as bat:
+        bat.write('python show.py %s'%(shelve_name))
 
     # 终局打印信息输出
     my_print("%03d) %s win! for %s, West:%s(%d）, East:%s(%d),总时间: %d ticks %.3fs:%.3fs" %

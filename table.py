@@ -67,7 +67,9 @@ def sign(n):  # 返回n的符号，小于0为-1，否则为1
 
 
 def copy_card(card):  # 安全拷贝道具
-    return Card(card.code, card.param, copy.copy(card.pos))
+    if isinstance(card, str):
+        return card
+    return Card(card.code, card.param, copy.copy(card.pos)) if card is not None else None
 
 
 class Card:  # 道具
@@ -480,7 +482,7 @@ class Table:  # 球桌
             'life': op_player.life,
             'clock': op_player.clock_time,  # 花费的物理时间（秒）
             'cards': [copy_card(c) for c in op_player.card_box],
-            'active_card': copy_card(self.active_card),
+            'active_card': (self.active_card[0], copy_card(self.active_card[1])),
             'accelerate': None if self.active_card[1] == CARD_DSPR else
             (-1 if op_player.action.acc < 0 else 1),
             'run_vector': None if self.active_card[1] == CARD_DSPR else

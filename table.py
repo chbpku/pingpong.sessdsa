@@ -66,6 +66,10 @@ def sign(n):  # 返回n的符号，小于0为-1，否则为1
     return -1 if n < 0 else 1
 
 
+def copy_card(card):  # 安全拷贝道具
+    return Card(card.code, card.param, copy.copy(card.pos))
+
+
 class Card:  # 道具
     def __init__(self, code, param, pos):
         self.code = code
@@ -468,14 +472,14 @@ class Table:  # 球桌
             'name': player.name,
             'position': copy.copy(player.pos),
             'life': player.life,
-            'clock': player.clock_time, # 花费的物理时间（秒）
-            'cards': copy.copy(player.card_box)}
+            'clock': player.clock_time,  # 花费的物理时间（秒）
+            'cards': [copy_card(c) for c in player.card_box]}
         dict_op_side = {
             'name': op_player.name,
             'position': copy.copy(op_player.pos),
             'life': op_player.life,
-            'clock': op_player.clock_time, # 花费的物理时间（秒）
-            'cards': copy.copy(op_player.card_box),
+            'clock': op_player.clock_time,  # 花费的物理时间（秒）
+            'cards': [copy_card(c) for c in op_player.card_box],
             'active_card': self.active_card,
             'accelerate': None if self.active_card[1] == CARD_DSPR else
             (-1 if op_player.action.acc < 0 else 1),
@@ -486,7 +490,7 @@ class Table:  # 球桌
             'velocity': copy.copy(self.ball.velocity)}
         dict_card = {
             'card_tick': self.card_tick,
-            'cards': copy.copy(self.cards)}
+            'cards': [copy_card(c) for c in self.cards]}
         # 调用，返回迎球方的动作
         try:
             self.clock_start = time.time()

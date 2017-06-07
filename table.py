@@ -480,7 +480,7 @@ class Table:  # 球桌
             'life': op_player.life,
             'clock': op_player.clock_time,  # 花费的物理时间（秒）
             'cards': [copy_card(c) for c in op_player.card_box],
-            'active_card': self.active_card,
+            'active_card': copy_card(self.active_card),
             'accelerate': None if self.active_card[1] == CARD_DSPR else
             (-1 if op_player.action.acc < 0 else 1),
             'run_vector': None if self.active_card[1] == CARD_DSPR else

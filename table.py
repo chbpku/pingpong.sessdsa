@@ -85,9 +85,12 @@ class Card:  # 道具
             return self.code == other.code
         else:
             return False
-
+    def __str__(self):
+        return self.code
 
 class CardBox(list):  # 道具箱，list类型的子类
+    def __init__(self):
+        self.historycard=[]
     def collect(self, card):  # 添加道具到道具箱，如果道具箱满的话，就移除最旧的道具腾出空间
         while self.isfull():
             self.pop(0)
@@ -109,7 +112,8 @@ class CardBox(list):  # 道具箱，list类型的子类
             ret_str += card.code + ' '
         ret_str += ']'
         return ret_str
-
+    def use_card_history(self):
+        return self.historycard
 
 class Vector:  # 矢量
     def __init__(self, x, y=None):
@@ -260,11 +264,12 @@ class Ball:  # 球
 class RacketAction:  # 球拍动作
     def __init__(self, tick, bat_vector, acc_vector, run_vector, side: str, card: Card):
         # self.t0 = tick  # tick时刻的动作，都是一维矢量，仅在y轴方向
+        self.side=side##新加的，为了给set_action传参
         self.bat = bat_vector  # t0~t1迎球的动作矢量（移动方向及距离）
         self.acc = acc_vector  # t1触球加速矢量（加速的方向及速度）
         self.run = run_vector  # t1~t2跑位的动作矢量（移动方向及距离）
         self.card = (side, card)  # 对'SELF'/'OPNT'使用道具
-
+        self.tick=tick#为了给set_action传参
     def normalize(self):
         # 全都规范为整数
         self.bat = int(self.bat)
@@ -281,7 +286,8 @@ class Racket:  # 球拍
         self.action = self.datastore = None
         self.clock_time = 0.0
         self.card_box = CardBox()  # 道具箱，本方拥有的道具，不超过MAX_CARDS个，超过的话按照队列形式删除旧的道具。
-
+        self.usedcard=self.card_box.historycard
+        self.tick=0
     def bind_play(self, name, serve, play, summarize):  # 绑定玩家名称和serve, play, summarize函数
         self.name = name
         self.serve = serve  # 发球函数
@@ -290,10 +296,13 @@ class Racket:  # 球拍
 
     def set_action(self, action):  # 设置球拍动作，包括使用道具
         self.action = action
+        self.tick=action.tick
+        self.side=action.side
         card = self.card_box.discard(action.card[1])  # 先从道具箱中移除道具
         if card is None:  # 如果道具不存在，那就删除card引用
             self.action.card = (None, None)
-
+        if card !=None:
+            self.usedcard.append((self.side,str(card),self.tick))#记入数据，记录：使用方，card是啥，时间点
     def set_datastore(self, ds):  # 设置数据存储，一个字典
         self.datastore = ds
 
@@ -346,7 +355,7 @@ class RacketData:  # 球拍信息，记录日志用
         self.bat_lf, self.acc_lf, self.run_lf, self.card_lf = racket.bat_lf, racket.acc_lf, racket.run_lf, racket.card_lf
         self.pos, self.action = copy.copy(racket.pos), copy.copy(racket.action)
         self.card_box = copy.copy(racket.card_box)
-
+        self.use_card=copy.copy(racket.usedcard)
 
 class BallData:  # 球的信息，记录日志用
     def __init__(self, ball_or_pos, velocity=None):
